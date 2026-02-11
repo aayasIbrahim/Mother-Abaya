@@ -30,7 +30,7 @@ const Navbar = () => {
           <div className="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 flex flex-col items-center flex-shrink-0">
             <Link href="/" className="group transition-transform duration-300 active:scale-95">
               <div className="flex items-center justify-center space-x-[-8px] md:space-x-[-10px] scale-[0.85] md:scale-100">
-                <div className="h-9 w-9 md:h-10 md:w-10 rounded-full bg-pink-100 flex items-center justify-center border border-pink-200 text-xs font-bold">M</div>
+                <div className="h-9 w-9 md:h-10 md:w-10 rounded-full bg-pink-100 flex items-center justify-center border border-pink-200 text-xs font-bold text-white">M</div>
                 <div className="z-10 h-11 w-11 md:h-12 md:w-12 rounded-full border-2 border-pink-300 bg-white p-1 shadow-sm">
                   <img src="/mother.jpg" alt="Logo" className="h-full w-full rounded-full object-cover" />
                 </div>
