@@ -36,7 +36,7 @@ const Navbar = () => {
                 </div>
                 <div className="h-9 w-9 md:h-10 md:w-10 rounded-full bg-pink-200 flex items-center justify-center border border-pink-300 text-xs font-bold">A</div>
               </div>
-              <span className="mt-0.5 block text-center font-serif text-base md:text-xl font-semibold tracking-tighter">
+              <span className="mt-0.5 block text-black text-center font-serif text-base md:text-xl font-semibold tracking-tighter">
                 Mother Abaya
               </span>
             </Link>
