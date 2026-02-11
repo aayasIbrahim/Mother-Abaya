@@ -1,5 +1,26 @@
 {
+  "name": "mother-project",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
   "dependencies": {
-    "lucide-react": "^0.563.0"
+    "@tailwindcss/postcss": "^4.1.18",
+    "framer-motion": "^12.34.0",
+    "lucide-react": "^0.563.0",
+    "next": "latest",
+    "postcss": "^8.5.6",
+    "react": "^18",
+    "react-dom": "^18",
+    "tailwindcss": "^4.1.18"
+  },
+  "devDependencies": {
+    "@types/node": "25.2.3",
+    "@types/react": "19.2.13",
+    "typescript": "5.9.3"
   }
 }
