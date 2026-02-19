@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Nav";
+import Footer from "@/components/Footer";
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -25,7 +26,6 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Mother Abaya | Elegance in Every Stitch",
     description: "Shop the latest collection of premium abayas and modest fashion.",
-    url: "https://your-domain.com", // আপনার আসল ডোমেইন এখানে দিন
     siteName: "Mother Abaya",
     locale: "en_US",
     type: "website",
@@ -53,6 +53,7 @@ export default function RootLayout({
       >
         <Navbar/>
         {children}
+        <Footer/>
       </body>
     </html>
   );
