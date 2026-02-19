@@ -48,7 +48,7 @@ const Navbar = () => {
             <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-700">
               <Link href="/terms" className="hover:text-pink-500 transition-colors">Terms & Conditions</Link>
               <Link href="/about" className="hover:text-pink-500 transition-colors">About Us</Link>
-              <Link href="/contact" className="hover:text-pink-500 transition-colors">Contact Us</Link>
+              <Link href="/contact-us" className="hover:text-pink-500 transition-colors">Contact Us</Link>
             </div>
 
             {/* Icons (Mobile: Only Cart, Desktop: All) */}
@@ -111,7 +111,7 @@ const Navbar = () => {
               <div className="flex flex-col text-white font-medium">
                 <Link href="/terms" onClick={()=>setIsOpen(false)} className="px-6 py-4 border-b border-white/10 hover:bg-white/10 transition-colors">Terms & Conditions</Link>
                 <Link href="/about" onClick={()=>setIsOpen(false)} className="px-6 py-4 border-b border-white/10 hover:bg-white/10 transition-colors">About Us</Link>
-                <Link href="/contact" onClick={()=>setIsOpen(false)} className="px-6 py-4 border-b border-white/10 hover:bg-white/10 transition-colors">Contact Us</Link>
+                <Link href="/contact-us" onClick={()=>setIsOpen(false)} className="px-6 py-4 border-b border-white/10 hover:bg-white/10 transition-colors">Contact Us</Link>
                 <Link href="/login" onClick={()=>setIsOpen(false)} className="px-6 py-4 hover:bg-white/10 transition-colors">Login / Register</Link>
               </div>
             </motion.div>
