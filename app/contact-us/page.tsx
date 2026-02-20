@@ -9,7 +9,7 @@ const ContactPage = () => {
      <PageHero title="Contact Us" />
 
       {/* Contact Content */}
-      <section className="container mx-auto px-4 py-12 -mt-10 mt-8">
+      <section className="mx-auto max-w-7xl px-4 py-12 -mt-10 mt-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* Contact Info Cards */}
