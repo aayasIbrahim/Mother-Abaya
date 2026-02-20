@@ -6,7 +6,6 @@ const Footer = () => {
   return (
     <footer className="w-full bg-white pt-8 pb-4">
       <div className="container mx-auto px-4">
-        
         {/* Social Media Icons */}
         <div className="flex justify-center gap-6 mb-8">
           <Link
@@ -28,17 +27,17 @@ const Footer = () => {
         {/* Action Buttons (Mobile First & Modern) */}
         <div className="flex flex-col gap-3 mb-8 max-w-7xl mx-auto">
           {[
-            "Return Refund Policy",
-            "Terms & Conditions",
-            "Privacy Policy",
-            "About Us",
+            { label: "Return Refund Policy", href: "/return-refund-policy" },
+            { label: "Terms & Conditions", href: "/terms" },
+            { label: "Privacy Policy", href: "/privacy-policy" },
+            { label: "About Us", href: "/about" },
           ].map((item) => (
             <Link
-              key={item}
-              href={`/${item.toLowerCase().replace(/ /g, "-")}`}
+              key={item.label}
+              href={item.href}
               className="w-full bg-[#B3589D] text-white text-center py-4 rounded-sm text-lg font-medium hover:bg-[#a04a8b] transition-all duration-300 shadow-sm active:scale-95"
             >
-              {item}
+              {item.label}
             </Link>
           ))}
         </div>
@@ -47,7 +46,7 @@ const Footer = () => {
         <div className="flex justify-center mb-10 max-w-3xl mx-auto">
           <div className="w-full overflow-hidden border border-gray-100 p-2 rounded-md shadow-sm bg-gray-50">
             <img
-              src="/Payment.png" 
+              src="/Payment.png"
               alt="Supported Payment Methods"
               className="w-full h-auto object-contain"
             />
@@ -64,7 +63,6 @@ const Footer = () => {
             . All rights reserved.
           </p>
         </div>
-
       </div>
     </footer>
   );

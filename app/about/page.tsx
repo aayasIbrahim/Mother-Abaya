@@ -9,7 +9,7 @@ const AboutPage = () => {
       {/* Hero */}
       <PageHero title="About Us" />
 
-      {/* Main Section */}
+      {/* Main Section */} 
       <section className="container mx-auto px-4 sm:px-6 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
