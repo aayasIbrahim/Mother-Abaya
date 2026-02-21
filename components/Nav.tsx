@@ -54,7 +54,7 @@ const Navbar = () => {
             {/* Icons (Mobile: Only Cart, Desktop: All) */}
             <div className="flex items-center space-x-4 md:space-x-5 text-gray-800">
               <button className="hidden md:block hover:text-pink-500"><Search size={22} /></button>
-              <button className="hidden md:block hover:text-pink-500"><User size={22} /></button>
+              <Link href="/login" className="hidden md:block hover:text-pink-500"><User size={22} /></Link>
               
               <Link href="/cart" className="relative group p-1">
                 <ShoppingCart size={24} strokeWidth={1.5} className="md:size-[22px]" />
