@@ -5,23 +5,25 @@ import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff, Mail, Lock, User, Phone, UserPlus } from "lucide-react";
+import { useTransition } from "react";
 
 const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-
-    const res = await registerUser(formData);
-
-    if (res?.error) {
-      toast.error(res.error);
-    } else if (res?.success) {
-      toast.success(res.success);
-      router.push("/login");
-    }
+    startTransition(async () => {
+      const res = await registerUser(formData);
+      if (res?.error) {
+        toast.error(res.error);
+      } else if (res?.success) {
+        toast.success(res.success);
+        router.push("/login");
+      }
+    });
   };
 
   return (
@@ -121,6 +123,8 @@ const RegisterPage = () => {
             <div className="flex items-center gap-2 ml-1 py-2">
               <input
                 type="checkbox"
+                name="terms"
+                // required
                 className="w-4 h-4 accent-[#B3589D]"
                 id="terms"
               />
@@ -130,7 +134,7 @@ const RegisterPage = () => {
               >
                 I agree to the{" "}
                 <Link
-                  href="/terms-and-conditions"
+                  href="/terms"
                   className="text-[#B3589D] font-bold hover:underline"
                 >
                   Terms
@@ -148,10 +152,17 @@ const RegisterPage = () => {
             {/* Register Button */}
             <button
               type="submit"
-              className="w-full bg-[#B3589D] text-white font-bold py-4 rounded-2xl shadow-lg shadow-pink-200 hover:bg-[#a04a8b] hover:shadow-pink-300 transform active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+              disabled={isPending}
+              className="w-full bg-[#B3589D] text-white font-bold py-4 rounded-2xl disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              <UserPlus size={20} />
-              Create Account
+              {isPending ? (
+                <>
+                  <span className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  Creating...
+                </>
+              ) : (
+                "Create Account"
+              )}
             </button>
           </form>
 
