@@ -4,7 +4,7 @@ import connectDB from "./db";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
 
-// ✅ Extend NextAuth types safely
+
 declare module "next-auth" {
   interface Session {
     user: {
