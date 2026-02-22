@@ -3,6 +3,7 @@ import connectDB from "@/libs/db";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
 
+
 export const registerUser = async (formData: FormData) => {
   try {
     await connectDB();
@@ -10,12 +11,16 @@ export const registerUser = async (formData: FormData) => {
     const email = (formData.get("email") as string)?.trim().toLowerCase();
     const password = formData.get("password") as string;
     const phone = formData.get("phone") as string;
+    const terms = formData.get("terms");
 
     if (!name || !email || !password) {
       return { error: "All fields are required" };
     }
     if (password.length < 6) {
       return { error: "Password must be at least 6 characters" };
+    }
+    if (!terms) {
+      return { error: "You must accept Terms & Conditions" };
     }
     // ইউজার অলরেডি আছে কিনা চেক
     const existingUser = await User.findOne({ email });
@@ -30,6 +35,7 @@ export const registerUser = async (formData: FormData) => {
       password: hashedPassword,
       phone,
       role: "user",
+      acceptedTerms: true,
     });
     return { success: "Account created successfully" };
   } catch (error) {
