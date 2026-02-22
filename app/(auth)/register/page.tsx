@@ -18,7 +18,7 @@ const RegisterPage = () => {
 
     if (res?.error) {
       toast.error(res.error);
-    } else {
+    } else if (res?.success) {
       toast.success(res.success);
       router.push("/login");
     }
@@ -146,7 +146,10 @@ const RegisterPage = () => {
             </div>
 
             {/* Register Button */}
-            <button type="submit" className="w-full bg-[#B3589D] text-white font-bold py-4 rounded-2xl shadow-lg shadow-pink-200 hover:bg-[#a04a8b] hover:shadow-pink-300 transform active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+            <button
+              type="submit"
+              className="w-full bg-[#B3589D] text-white font-bold py-4 rounded-2xl shadow-lg shadow-pink-200 hover:bg-[#a04a8b] hover:shadow-pink-300 transform active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+            >
               <UserPlus size={20} />
               Create Account
             </button>
