@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -11,7 +12,6 @@ import {
   LogOut,
   Menu,
   X,
-
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
@@ -33,6 +33,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { data: session } = useSession();
   const pathname = usePathname();
 
   return (
@@ -135,10 +136,12 @@ export default function AdminLayout({
 
           <div className="flex items-center gap-3 md:gap-6">
             <div className="flex items-center gap-3">
-              <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold text-gray-800">Admin Panel</p>
+              <div className="text-right  sm:block">
+                <p className="text-sm font-bold text-gray-800">
+                  {session?.user?.name || "Admin Panel"}
+                </p>
                 <p className="text-[10px] text-[#B3589D] font-black uppercase tracking-widest">
-                  Super User
+                  Admin
                 </p>
               </div>
               <div className="w-11 h-11 bg-gradient-to-tr from-[#B3589D] to-pink-400 rounded-2xl flex items-center justify-center text-white shadow-md shadow-pink-100">
