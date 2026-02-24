@@ -7,32 +7,27 @@ cloudinary.config({
 });
 
 export const uploadToCloudinary = async (file: File) => {
-  const arrayBuffer = await file.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
+  const data = await file.arrayBuffer();
+  const buffer = Buffer.from(data);
 
-  return new Promise((resolve, reject) => {
-    cloudinary.uploader.upload_stream(
-      { 
-        resource_type: "image",
-        folder: "mother_abaya/products" // ফোল্ডার অনুযায়ী গুছিয়ে রাখা ভালো
-      },
-      (error, result) => {
-        if (error) {
-          console.error("Cloudinary Upload Error:", error);
-          reject(error);
-        }
-        resolve(result); // এখানে secure_url এবং public_id থাকবে
-      }
-    ).end(buffer);
+   await cloudinary.uploader.upload_stream({ resource_type: "image" }, (error, result) => {
+    if (error) throw error;
+    return result;
   });
+
+  // Alternative: use base64 string
+  const base64 = `data:${file.type};base64,${buffer.toString("base64")}`;
+  const result = await cloudinary.uploader.upload(base64);
+  return result; // contains secure_url & public_id
 };
 
+// DELETE from Cloudinary
 export const deleteFromCloudinary = async (publicId: string) => {
   try {
     const result = await cloudinary.uploader.destroy(publicId);
-    return result;
+    return result; // { result: 'ok' } if successful
   } catch (err) {
-    console.error("Cloudinary Delete Error:", err);
-    throw new Error("Failed to delete image");
+    console.error("Cloudinary delete error:", err);
+    throw err;
   }
 };

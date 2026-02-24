@@ -16,23 +16,32 @@ export const addProduct = async (formData: FormData) => {
       : undefined;
     const category = formData.get("category") as string;
     const imageFile = formData.get("image") as File;
-    if (!imageFile || imageFile.size === 0) {
-      return { error: "Please upload a product image." };
-    }
-    const uploadRes: any = await uploadToCloudinary(imageFile);
-    const imageUrl = uploadRes.secure_url;
+
     const stock = Number(formData.get("stock"));
     const description = formData.get("description") as string;
 
-    // বিশেষ ডিটেইলস
-    const fabric = formData.get("fabric") as string;
-    const kurtiLength = formData.get("kurtiLength") as string;
-
-    // সিম্পল ভ্যালিডেশন
-    if (!name || !price || !category || !imageUrl) {
-      return { error: "Failed to publish the product. Please try again." };
+    if (!imageFile || imageFile.size === 0) {
+      return { error: "Please upload a product image." };
     }
 
+    if (!imageFile.type.startsWith("image/")) {
+      return { error: "Only image files are allowed." };
+    }
+
+    if (!name || isNaN(price) || !category) {
+      return { error: "Invalid product data." };
+    }
+
+    if (discountPrice && discountPrice >= price) {
+      return { error: "Discount price must be lower than original price." };
+    }
+
+    if (isNaN(stock) || stock < 0) {
+      return { error: "Invalid stock value." };
+    }
+
+    const uploadRes: any = await uploadToCloudinary(imageFile);
+    const imageUrl = uploadRes.secure_url;
     const newProduct = await Product.create({
       name,
       price,
@@ -41,8 +50,8 @@ export const addProduct = async (formData: FormData) => {
       images: [imageUrl],
       stock,
       description,
-      details: { fabric },
-      measurements: { kurtiLength },
+      // details: { fabric },
+      // measurements: { kurtiLength },
       isSale: discountPrice ? true : false,
     });
 

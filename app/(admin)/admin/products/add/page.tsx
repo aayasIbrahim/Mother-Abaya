@@ -1,9 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef, useTransition } from "react";
 import {
   ArrowLeft,
   Save,
-  ImageIcon,
   X,
   UploadCloud,
   Package,
@@ -18,9 +17,10 @@ import { addProduct } from "@/app/(admin)/admin/products/add/actions";
 import { toast } from "react-hot-toast";
 
 export default function AddProductPage() {
-  const [loading, setLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const [preview, setPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -32,30 +32,28 @@ export default function AddProductPage() {
     }
   };
 
-  const removeImage = () => {
-    setPreview(null);
-  };
   const clientAction = async (formData: FormData) => {
-    setLoading(true);
+    console.log("Client FormData:", Object.fromEntries(formData.entries()));
 
-    try {
-      const result = await addProduct(formData);
+    startTransition(async () => {
+      try {
+        const result = await addProduct(formData);
+        console.log("Client Result:", result);
 
-      if (result?.error) {
-        toast.error(result.error);
-        setLoading(false);
-      } else {
-        toast.success("Product Published Successfully!");
+        if (result?.error) {
+          toast.error(result.error);
+        } else {
+          toast.success("Product Published Successfully!");
 
-        setTimeout(() => {
-          router.push("/admin/products");
-          router.refresh();
-        }, 1500);
+          setTimeout(() => {
+            router.push("/admin/products");
+            router.refresh();
+          }, 1500);
+        }
+      } catch (err) {
+        toast.error("Something went wrong!");
       }
-    } catch (err) {
-      toast.error("Something went wrong!");
-      setLoading(false);
-    }
+    });
   };
 
   return (
@@ -77,7 +75,11 @@ export default function AddProductPage() {
           </p>
         </div>
 
-        <form action={clientAction} className="p-8 md:p-10 space-y-8">
+        <form
+          action={clientAction}
+          encType="multipart/form-data"
+          className="p-8 md:p-10 space-y-8"
+        >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Name */}
             <div className="space-y-2">
@@ -199,15 +201,25 @@ export default function AddProductPage() {
             </div>
           </div>
           {/* Image URL */}
+          {/* ✅ UPDATED IMAGE SECTION */}
           <div className="space-y-2">
             <label className="text-sm font-bold text-gray-700 ml-1">
               Product Image
             </label>
 
-            <div className="relative group">
+            <div className="relative h-48 w-full rounded-[2rem] border-2 border-dashed border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden group">
+              <input
+                ref={fileInputRef}
+                name="image"
+                type="file"
+                accept="image/*"
+                required
+                onChange={handleImageChange}
+                className="absolute inset-0 opacity-0 cursor-pointer z-10"
+              />
+
               {!preview ? (
-                // ফাইল ইনপুট এরিয়া
-                <div className="relative h-40 w-full border-2 border-dashed border-gray-200 rounded-[2rem] bg-gray-50 flex flex-col items-center justify-center hover:bg-pink-50/30 hover:border-[#B3589D] transition-all cursor-pointer overflow-hidden">
+                <div className="flex flex-col items-center pointer-events-none">
                   <UploadCloud
                     className="text-gray-400 group-hover:text-[#B3589D] mb-2"
                     size={32}
@@ -215,38 +227,38 @@ export default function AddProductPage() {
                   <span className="text-xs font-bold text-gray-500">
                     Click to upload product image
                   </span>
-                  <input
-                    name="image"
-                    type="file"
-                    accept="image/*"
-                    required
-                    onChange={handleImageChange}
-                    className="absolute inset-0 opacity-0 cursor-pointer"
-                  />
                 </div>
               ) : (
-                // ইমেজ প্রিভিউ এরিয়া
-                <div className="relative h-48 w-full rounded-[2rem] border border-gray-100 overflow-hidden bg-gray-50 shadow-inner">
+                <>
                   <img
                     src={preview}
                     alt="Preview"
                     className="w-full h-full object-contain p-2"
                   />
+
                   <button
                     type="button"
-                    onClick={removeImage}
-                    className="absolute top-3 right-3 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-lg transition-transform active:scale-90"
+                    onClick={() => {
+                      setPreview(null);
+
+                      // Reset actual file input value
+                      if (fileInputRef.current) {
+                        fileInputRef.current.value = "";
+                      }
+                    }}
+                    className="absolute top-3 right-3 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-lg transition-transform active:scale-90 z-20"
                   >
                     <X size={16} />
                   </button>
-                </div>
+                </>
               )}
             </div>
+
             <p className="text-[10px] text-gray-400 ml-2 italic">
               Recommended: Square image (1:1), Max 5MB
             </p>
           </div>
-          
+
           <div className="space-y-2">
             <label className="text-sm font-bold text-gray-700 ml-1">
               Description
@@ -260,10 +272,10 @@ export default function AddProductPage() {
           </div>
           <button
             type="submit"
-            disabled={loading}
+            disabled={isPending}
             className="w-full bg-[#B3589D] text-white font-black py-5 rounded-[2rem] shadow-xl hover:bg-[#a04a8b] transition-all flex items-center justify-center gap-3"
           >
-            {loading ? (
+            {isPending ? (
               <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
               <>
