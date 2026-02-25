@@ -7,27 +7,36 @@ cloudinary.config({
 });
 
 export const uploadToCloudinary = async (file: File) => {
-  const data = await file.arrayBuffer();
-  const buffer = Buffer.from(data);
+  try {
+    // ১. ফাইলকে বাফার থেকে বেস৬৪-এ রূপান্তর (Server Action Friendly)
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const base64Data = `data:${file.type};base64,${buffer.toString("base64")}`;
 
-   await cloudinary.uploader.upload_stream({ resource_type: "image" }, (error, result) => {
-    if (error) throw error;
-    return result;
-  });
+    // ২. ক্লাউডিনারিতে আপলোড (ফোল্ডারসহ)
+    const result = await cloudinary.uploader.upload(base64Data, {
+      folder: "mother_abaya/products", // ফাইল গুছিয়ে রাখার জন্য
+      resource_type: "auto",
+    });
 
-  // Alternative: use base64 string
-  const base64 = `data:${file.type};base64,${buffer.toString("base64")}`;
-  const result = await cloudinary.uploader.upload(base64);
-  return result; // contains secure_url & public_id
+    // ৩. পুরো অবজেক্ট রিটার্ন (যাতে secure_url এবং public_id দুটাই পাওয়া যায়)
+    return {
+      url: result.secure_url,
+      publicId: result.public_id,
+    };
+  } catch (error) {
+    console.error("Cloudinary Upload Error:", error);
+    throw new Error("Failed to upload image to Cloudinary");
+  }
 };
 
-// DELETE from Cloudinary
 export const deleteFromCloudinary = async (publicId: string) => {
   try {
     const result = await cloudinary.uploader.destroy(publicId);
-    return result; // { result: 'ok' } if successful
+    
+    return result; // সফল হলে { result: 'ok' } দেয়
   } catch (err) {
-    console.error("Cloudinary delete error:", err);
-    throw err;
+    console.error("Cloudinary Delete Error:", err);
+    throw new Error("Failed to delete image from Cloudinary");
   }
 };

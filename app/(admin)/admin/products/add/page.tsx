@@ -21,7 +21,9 @@ export default function AddProductPage() {
   const router = useRouter();
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [category, setCategory] = useState("abaya"); // default value
+  const [category, setCategory] = useState("abaya");
+
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setCategory(e.target.value);
@@ -38,12 +40,9 @@ export default function AddProductPage() {
   };
 
   const clientAction = async (formData: FormData) => {
-    console.log("Client FormData:", Object.fromEntries(formData.entries()));
-
     startTransition(async () => {
       try {
         const result = await addProduct(formData);
-        console.log("Client Result:", result);
 
         if (result?.error) {
           toast.error(result.error);
