@@ -21,6 +21,13 @@ export default function AddProductPage() {
   const router = useRouter();
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [category, setCategory] = useState("abaya");
+
+  
+
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setCategory(e.target.value);
+  };
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -33,12 +40,9 @@ export default function AddProductPage() {
   };
 
   const clientAction = async (formData: FormData) => {
-    console.log("Client FormData:", Object.fromEntries(formData.entries()));
-
     startTransition(async () => {
       try {
         const result = await addProduct(formData);
-        console.log("Client Result:", result);
 
         if (result?.error) {
           toast.error(result.error);
@@ -113,6 +117,9 @@ export default function AddProductPage() {
                 />
                 <select
                   name="category"
+                  value={category}
+                  onChange={handleChange}
+                  required
                   className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none appearance-none"
                 >
                   <option value="abaya">Abaya</option>
