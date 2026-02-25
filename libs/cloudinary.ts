@@ -7,28 +7,20 @@ cloudinary.config({
 });
 
 export const uploadToCloudinary = async (file: File) => {
-  try {
-    // ১. ফাইলকে বাফার থেকে বেস৬৪-এ রূপান্তর (Server Action Friendly)
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const base64Data = `data:${file.type};base64,${buffer.toString("base64")}`;
+  const data = await file.arrayBuffer();
+  const buffer = Buffer.from(data);
 
-    // ২. ক্লাউডিনারিতে আপলোড (ফোল্ডারসহ)
-    const result = await cloudinary.uploader.upload(base64Data, {
-      folder: "mother_abaya/products", // ফাইল গুছিয়ে রাখার জন্য
-      resource_type: "auto",
-    });
+   await cloudinary.uploader.upload_stream({ resource_type: "image" }, (error, result) => {
+    if (error) throw error;
+    return result;
+  });
 
-    // ৩. পুরো অবজেক্ট রিটার্ন (যাতে secure_url এবং public_id দুটাই পাওয়া যায়)
-    return {
-      url: result.secure_url,
-      publicId: result.public_id,
-    };
-  } catch (error) {
-    console.error("Cloudinary Upload Error:", error);
-    throw new Error("Failed to upload image to Cloudinary");
-  }
+  // Alternative: use base64 string
+  const base64 = `data:${file.type};base64,${buffer.toString("base64")}`;
+  const result = await cloudinary.uploader.upload(base64);
+  return result; // contains secure_url & public_id
 };
+
 
 export const deleteFromCloudinary = async (publicId: string) => {
   try {
