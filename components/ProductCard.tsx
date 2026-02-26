@@ -32,7 +32,7 @@ export default function ProductCard({ name, originalPrice, salePrice, imageUrl, 
       <div className="mt-4 text-center space-y-1">
         <h3 className="text-xs font-bold uppercase tracking-widest text-gray-800">{name}</h3>
         <div className="flex justify-center items-center gap-2 text-sm">
-          <span className="text-gray-400 line-through">৳{originalPrice.toLocaleString()}</span>
+          <span className="text-gray-900 line-through">৳{originalPrice.toLocaleString()}</span>
           <span className="text-gray-900 font-bold">৳{salePrice.toLocaleString()}</span>
         </div>
       </div>
