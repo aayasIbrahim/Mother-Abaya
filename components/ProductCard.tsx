@@ -1,17 +1,19 @@
-// components/ProductCard.tsx
+
 import React from "react";
+import Link from "next/link";
 
 interface ProductProps {
   name: string;
+  id: string;
   originalPrice: number;
   salePrice: number;
   imageUrl: string;
   isSale?: boolean;
 }
 
-export default function ProductCard({ name, originalPrice, salePrice, imageUrl, isSale }: ProductProps) {
+export default function ProductCard({ id, name, originalPrice, salePrice, imageUrl, isSale }: ProductProps) {
   return (
-    <div className="group cursor-pointer">
+    <Link href={`/product/${id}`} className="group cursor-pointer">
       <div className="relative aspect-[3/4] overflow-hidden bg-gray-100 rounded-sm">
         {/* Sale Tag */}
         {isSale && (
@@ -36,6 +38,6 @@ export default function ProductCard({ name, originalPrice, salePrice, imageUrl, 
           <span className="text-gray-900 font-bold">৳{salePrice.toLocaleString()}</span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
