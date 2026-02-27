@@ -3,38 +3,46 @@ import React from "react";
 import connectDB from "@/libs/db";
 import Product from "@/models/Product";
 import ProductCard from "@/components/ProductCard";
+import SortSelector from "@/components/SortSelector";
 
-// ক্যাশে ম্যানেজমেন্টের জন্য (যদি ডাটা ঘন ঘন আপডেট হয়)
 export const revalidate = 60;
 
-export default async function ShopPage() {
+export default async function ShopPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ sort?: string }>;
+}) {
+  const { sort } = await searchParams;
   await connectDB();
+  let sortOption: any = { createdAt: -1 };
+  if (sort === "price_asc") sortOption = { price: 1 };
+  if (sort === "price_desc") sortOption = { price: -1 };
 
-  // ১. ডাটাবেস থেকে প্লেইন অবজেক্ট হিসেবে ডাটা ফেচ করা
-  const productsRaw = await Product.find({}).sort({ createdAt: -1 }).lean();
-
-  // ২. ক্লায়েন্ট কম্পোনেন্টে পাঠানোর আগে সিরিয়ালাইজ করা (Serialization error ফিক্স)
+  const productsRaw = await Product.find({}).sort(sortOption).lean();
   const products = JSON.parse(JSON.stringify(productsRaw));
 
   return (
     <div className="min-h-screen bg-[#D6B4CE] p-4 md:p-10">
       <div className="max-w-7xl mx-auto">
         {/* Top Bar: Sort & Results */}
-        <div className="flex justify-between items-center mb-10 border-b border-white/40 pb-5">
-          <div>
-            <h2 className="text-xl font-black text-gray-800 tracking-tighter uppercase italic">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 mb-12 border-b border-white/40 pb-6">
+          {/* Left Side: Text Info */}
+          <div className="space-y-1">
+            <h2 className="text-2xl md:text-3xl font-black text-gray-800 tracking-tighter uppercase italic leading-none">
               Our Collection
             </h2>
-            <p className="text-[10px] md:text-xs font-bold text-gray-700 uppercase tracking-widest opacity-70">
-              Showing {products.length} unique pieces
-            </p>
+            <div className="flex items-center gap-2">
+              <span className="w-8 h-[2px] bg-[#B3589D] hidden md:block"></span>
+              <p className="text-[10px] md:text-xs font-bold text-gray-700 uppercase tracking-[0.2em] opacity-80">
+                Showing {products.length} unique pieces
+              </p>
+            </div>
           </div>
 
-          <select className="bg-white/50 border-none text-[10px] md:text-xs font-black uppercase tracking-widest focus:ring-2 focus:ring-[#B3589D]/20 rounded-xl px-4 py-2 cursor-pointer outline-none">
-            <option>Sort by latest</option>
-            <option>Price: Low to High</option>
-            <option>Price: High to Low</option>
-          </select>
+          {/* Right Side: Sort Selector */}
+          <div className="w-full sm:w-auto flex justify-end">
+            <SortSelector />
+          </div>
         </div>
 
         {/* Product Grid */}
