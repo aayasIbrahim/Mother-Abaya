@@ -58,7 +58,7 @@ const Navbar = () => {
               
               <Link href="/cart" className="relative group p-1">
                 <ShoppingCart size={24} strokeWidth={1.5} className="md:size-[22px]" />
-                <span className="absolute -right-1 -top-1 md:-right-2 md:-top-2 flex h-5 w-5 items-center justify-center rounded-full bg-black text-[10px] font-bold text-white border-2 border-white">
+                <span className="absolute -right-1 -top-1 md:-right-2 md:-top-2 flex h-5 w-5 items-center justify-center rounded-full bg-pink-500 text-[10px] font-bold text-white border-2 border-white">
                   4
                 </span>
               </Link>
