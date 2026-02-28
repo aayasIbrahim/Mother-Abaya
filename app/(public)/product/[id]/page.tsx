@@ -4,6 +4,7 @@ import connectDB from "@/libs/db";
 import Product from "@/models/Product";
 import { notFound } from "next/navigation";
 import SizeSelector from "@/components/SizeSelector";
+import QuantitySelector from "@/components/QuantitySelector";
 
 export default async function ProductDetailsPage({
   params,
@@ -79,8 +80,9 @@ export default async function ProductDetailsPage({
                 {product.details?.fabric || "Premium Quality"}
               </span>
             </div>
-
-            <button className="w-full bg-[#B3589D] text-white py-6 rounded-[1.5rem] font-black text-xl shadow-2xl shadow-pink-200 hover:bg-[#9c4a88] transition-all active:scale-95 flex items-center justify-center gap-3">
+            {/* Quantity Selector - নতুন যোগ করা হয়েছে */}
+            <QuantitySelector />
+            <button className="w-full bg-[#B3589D] text-white py-6 rounded-[1.5rem] font-black  shadow-2xl shadow-pink-200 hover:bg-[#9c4a88] transition-all active:scale-95 flex items-center justify-center gap-3">
               ADD TO CART
               <span className="text-sm opacity-50 font-normal">|</span>
               <span className="text-sm font-bold tracking-widest uppercase">
