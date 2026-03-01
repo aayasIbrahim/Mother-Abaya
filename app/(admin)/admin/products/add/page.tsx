@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { addProduct } from "@/app/(admin)/admin/products/add/actions";
+import { addProduct } from "@/libs/actions/product";
 
 import { toast } from "react-hot-toast";
 
@@ -22,8 +22,6 @@ export default function AddProductPage() {
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [category, setCategory] = useState("abaya");
-
-  
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setCategory(e.target.value);
