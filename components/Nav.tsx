@@ -148,24 +148,29 @@ const Navbar = () => {
               className="fixed inset-y-0 left-0 z-[70] w-[80%] max-w-sm bg-[#C9A9C3] shadow-2xl md:hidden flex flex-col"
             >
               {/* Sidebar Header with Search */}
-              <div className="p-4 border-b border-white/20">
+              <div className="p-5 border-b border-white/20">
                 <div className="flex items-center justify-between mb-6">
-                  <div className="relative flex-1 mr-4">
-                    <input
-                      type="text"
-                      placeholder="Search products..."
-                      className="w-full bg-white/90 px-4 py-2 rounded-md text-sm outline-none"
-                    />
-                    <Search
-                      className="absolute right-3 top-2.5 text-gray-500"
-                      size={18}
-                    />
-                  </div>
+                  <h2 className="text-white text-xs font-black uppercase tracking-widest">
+                    Menu
+                  </h2>
                   <button
                     onClick={() => setIsOpen(false)}
                     className="text-white"
                   >
-                    <X size={28} />
+                    <X size={24} />
+                  </button>
+                </div>
+
+                <div className="relative group">
+                  <button
+                    onClick={() => {
+                      setIsOpen(false);
+                      setIsSearchOpen(true);
+                    }}
+                    className="w-full flex items-center justify-between bg-white/10 hover:bg-white/20 px-4 py-3 rounded-xl text-white/70 text-sm transition-all border border-white/10"
+                  >
+                    <span>Search products...</span>
+                    <Search size={18} />
                   </button>
                 </div>
               </div>
