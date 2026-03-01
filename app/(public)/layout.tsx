@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-// import "./globals.css";
 import Navbar from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { Toaster } from "react-hot-toast";
+import CartDrawer from "@/components/cartDrawer";
 
 export const metadata: Metadata = {
   title: {
@@ -50,6 +50,7 @@ export default function PublicLayout({
       <body className={`antialiased`}>
         <Navbar />
         {children}
+        <CartDrawer/>
         <Footer />
         {/* ✅ Toast Container */}
         <Toaster

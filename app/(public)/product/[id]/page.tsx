@@ -3,8 +3,7 @@ import React from "react";
 import connectDB from "@/libs/db";
 import Product from "@/models/Product";
 import { notFound } from "next/navigation";
-import SizeSelector from "@/components/SizeSelector";
-import QuantitySelector from "@/components/QuantitySelector";
+import ProductActionSection from "@/components/ProductActionSection";
 
 export default async function ProductDetailsPage({
   params,
@@ -68,9 +67,8 @@ export default async function ProductDetailsPage({
             {product.description}
           </p>
 
-          {/* সাইজ সিলেকশন সেকশন */}
-          <SizeSelector dbSizes={product.sizes || []} />
-
+        
+          <ProductActionSection product={product} />
           <div className="pt-4 space-y-6">
             <div className="flex items-center gap-4">
               <span className="font-bold uppercase text-[10px] tracking-[0.2em] text-gray-400">
@@ -81,14 +79,6 @@ export default async function ProductDetailsPage({
               </span>
             </div>
             {/* Quantity Selector - নতুন যোগ করা হয়েছে */}
-            <QuantitySelector />
-            <button className="w-full bg-[#B3589D] text-white py-6 rounded-[1.5rem] font-black  shadow-2xl shadow-pink-200 hover:bg-[#9c4a88] transition-all active:scale-95 flex items-center justify-center gap-3">
-              ADD TO CART
-              <span className="text-sm opacity-50 font-normal">|</span>
-              <span className="text-sm font-bold tracking-widest uppercase">
-                Quick Buy
-              </span>
-            </button>
           </div>
         </div>
       </div>
