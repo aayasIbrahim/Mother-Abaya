@@ -5,10 +5,12 @@ import Link from "next/link";
 import { Search, User, ShoppingCart, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import TopBanner from "./Topbar";
+import SearchOverlay from "./searchOverlay";
 import { useCartStore } from "@/store/useCartStore";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { getTotalItems, openCart } = useCartStore();
   const [mounted, setMounted] = useState(false);
 
@@ -88,9 +90,18 @@ const Navbar = () => {
 
             {/* Icons (Mobile: Only Cart, Desktop: All) */}
             <div className="flex items-center space-x-4 md:space-x-5 text-gray-800">
-              <button className="hidden md:block hover:text-pink-500">
-                <Search size={22} />
+              <button
+                onClick={() => setIsSearchOpen(true)}
+                className="hidden md:block hover:text-[#B3589D] transition-colors p-1"
+              >
+                <Search size={22} strokeWidth={1.5} />
               </button>
+
+              {/* সার্চ ওভারলে এখানে কল করুন */}
+              <SearchOverlay
+                isOpen={isSearchOpen}
+                onClose={() => setIsSearchOpen(false)}
+              />
               <Link
                 href="/login"
                 className="hidden md:block hover:text-pink-500"

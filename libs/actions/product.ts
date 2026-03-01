@@ -22,7 +22,7 @@ export const deleteProduct = async (id: string) => {
     if (imageToDelete && imageToDelete.publicId) {
       const cloudinaryRes = await deleteFromCloudinary(imageToDelete.publicId);
       console.log("📡 Cloudinary Response:", cloudinaryRes);
-      
+
       // ক্লাউডিনারি যদি 'ok' না পাঠায়, তবুও আমরা ডাটাবেস থেকে ডিলিট করতে পারি
       // অথবা চাইলে এরর রিটার্ন করতে পারি
       if (cloudinaryRes.result !== "ok") {
@@ -46,10 +46,6 @@ export const deleteProduct = async (id: string) => {
   }
 };
 
-
-
-
-
 export const updateProduct = async (id: string, formData: FormData) => {
   try {
     await connectDB();
@@ -61,7 +57,9 @@ export const updateProduct = async (id: string, formData: FormData) => {
     // ২. ডাটা সংগ্রহ
     const name = formData.get("name") as string;
     const price = Number(formData.get("price"));
-    const discountPrice = formData.get("discountPrice") ? Number(formData.get("discountPrice")) : undefined;
+    const discountPrice = formData.get("discountPrice")
+      ? Number(formData.get("discountPrice"))
+      : undefined;
     const category = formData.get("category") as string;
     const fabric = formData.get("fabric") as string;
     const stock = Number(formData.get("stock"));
@@ -74,9 +72,9 @@ export const updateProduct = async (id: string, formData: FormData) => {
     if (imageFile && imageFile.size > 0) {
       console.log("📸 New image detected, uploading...");
       const uploadRes: any = await uploadToCloudinary(imageFile);
-      
+
       // শুধুমাত্র সিকিউর ইউআরএল স্ট্রিং হিসেবে সেভ করা (আপনার addProduct এর মত)
-      finalImages = [uploadRes.secure_url]; 
+      finalImages = [uploadRes.secure_url];
     }
 
     // ৪. ডাটাবেস আপডেট
@@ -93,17 +91,38 @@ export const updateProduct = async (id: string, formData: FormData) => {
         "details.fabric": fabric,
         isSale: discountPrice ? true : false,
       },
-      { runValidators: true }
+      { runValidators: true },
     );
 
     console.log("✅ Product Updated Successfully");
 
     revalidatePath("/admin/products");
     revalidatePath(`/admin/products/edit/${id}`);
-    
+
     return { success: true };
   } catch (error: any) {
     console.error("Update Product Error:", error);
     return { error: "Failed to update product. " + error.message };
   }
 };
+
+export async function searchProducts(query: string) {
+  try {
+    await connectDB();
+
+    const products = await Product.find({
+      $or: [
+        { name: { $regex: query, $options: "i" } },
+        { category: { $regex: query, $options: "i" } },
+      ],
+    })
+      .select("name price images category")
+      .limit(8)
+      .lean();
+
+    return JSON.parse(JSON.stringify(products));
+  } catch (error) {
+    console.error("Search Error:", error);
+    return [];
+  }
+}
