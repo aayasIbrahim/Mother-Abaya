@@ -59,6 +59,7 @@ export const addProduct = async (formData: FormData) => {
     });
 
     revalidatePath("/admin/products");
+    revalidatePath("/");
     return { success: true };
   } catch (error: any) {
     console.error("Product Error:", error);

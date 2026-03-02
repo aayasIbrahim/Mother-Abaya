@@ -5,8 +5,6 @@ import Product from "@/models/Product";
 import ProductCard from "@/components/public/ProductCard";
 import SortSelector from "@/components/public/SortSelector";
 
-export const revalidate = 60;
-
 export default async function ShopPage({
   searchParams,
 }: {
