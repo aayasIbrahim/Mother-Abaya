@@ -12,9 +12,8 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { addProduct } from "@/libs/actions/product";
-
 import { toast } from "react-hot-toast";
+import { addProduct } from "@/libs/actions/product";
 
 export default function AddProductPage() {
   const [isPending, startTransition] = useTransition();
@@ -206,7 +205,7 @@ export default function AddProductPage() {
             </div>
           </div>
           {/* Image URL */}
-          {/* ✅ UPDATED IMAGE SECTION */}
+
           <div className="space-y-2">
             <label className="text-sm font-bold text-gray-700 ml-1">
               Product Image

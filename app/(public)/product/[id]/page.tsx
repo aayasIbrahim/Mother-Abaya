@@ -3,7 +3,7 @@ import React from "react";
 import connectDB from "@/libs/db";
 import Product from "@/models/Product";
 import { notFound } from "next/navigation";
-import ProductActionSection from "@/components/ProductActionSection";
+import ProductActionSection from "@/components/public/ProductActionSection";
 
 export default async function ProductDetailsPage({
   params,

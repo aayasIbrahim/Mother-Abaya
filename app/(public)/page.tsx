@@ -2,8 +2,8 @@
 import React from "react";
 import connectDB from "@/libs/db";
 import Product from "@/models/Product";
-import ProductCard from "@/components/ProductCard";
-import SortSelector from "@/components/SortSelector";
+import ProductCard from "@/components/public/ProductCard";
+import SortSelector from "@/components/public/SortSelector";
 
 export const revalidate = 60;
 

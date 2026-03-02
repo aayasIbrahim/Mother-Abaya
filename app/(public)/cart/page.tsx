@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useCartStore } from "@/store/useCartStore";
 import { Minus, Plus, X } from "lucide-react";
-import PageHero from "@/components/PageHero";
+import PageHero from "@/components/public/PageHero";
 import Link from "next/link";
 
 export default function CartPage() {

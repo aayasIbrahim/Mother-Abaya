@@ -1,24 +1,21 @@
 import Image from "next/image";
-import PageHero from "@/components/PageHero";
+import PageHero from "@/components/public/PageHero";
 import { Star, ShieldCheck, Heart, Users } from "lucide-react";
 
 const AboutPage = () => {
   return (
     <main className="min-h-screen bg-[#D8AED3]">
-
       {/* Hero */}
       <PageHero title="About Us" />
 
-      {/* Main Section */} 
+      {/* Main Section */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-
           {/* Image Side */}
           <div className="relative group">
             <div className="absolute -inset-4 bg-[#B3589D]/10 rounded-3xl rotate-2 group-hover:rotate-0 transition-all duration-500"></div>
 
             <div className="relative overflow-hidden rounded-3xl shadow-xl border border-white/40">
-
               <Image
                 src="/mother store.jpg"
                 alt="Mother Abaya Store"
@@ -34,7 +31,6 @@ const AboutPage = () => {
                   Mother Abaya Store
                 </p>
               </div>
-
             </div>
           </div>
 
@@ -49,15 +45,15 @@ const AboutPage = () => {
             </h2>
 
             <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
-              Mother Abaya offers trendy, high-quality fashion for all.
-              With a strong presence both online and offline, we operate
-              from our retail outlet in Chittagong, serving a diverse clientele.
+              Mother Abaya offers trendy, high-quality fashion for all. With a
+              strong presence both online and offline, we operate from our
+              retail outlet in Chittagong, serving a diverse clientele.
             </p>
 
             <p className="text-gray-600 text-base sm:text-lg leading-relaxed font-medium">
-              We take pride in our dedication to style, quality, and
-              customer satisfaction. Every piece is crafted to make you
-              feel elegant and confident.
+              We take pride in our dedication to style, quality, and customer
+              satisfaction. Every piece is crafted to make you feel elegant and
+              confident.
             </p>
 
             {/* Features */}
@@ -77,44 +73,39 @@ const AboutPage = () => {
               </div>
             </div>
           </div>
-
         </div>
       </section>
 
       {/* Why Choose Us */}
       <section className="bg-gray-50 py-20 px-4 sm:px-6">
         <div className="container mx-auto text-center max-w-5xl">
-
           <h2 className="text-3xl sm:text-4xl font-bold mb-14 text-gray-900">
             Why Choose Mother Abaya?
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-
             {[
               {
                 icon: <Star />,
                 title: "Exclusive Collection",
-                desc: "Unique designs that blend tradition with modern aesthetics."
+                desc: "Unique designs that blend tradition with modern aesthetics.",
               },
               {
                 icon: <Users />,
                 title: "Happy Customers",
-                desc: "Join thousands of satisfied women who trust our quality."
+                desc: "Join thousands of satisfied women who trust our quality.",
               },
               {
                 icon: <Heart />,
                 title: "Crafted with Love",
-                desc: "We focus on every stitch to ensure perfection for you."
-              }
+                desc: "We focus on every stitch to ensure perfection for you.",
+              },
             ].map((item, index) => (
               <div
                 key={index}
                 className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
               >
-                <div className="text-[#B3589D] mb-4">
-                  {item.icon}
-                </div>
+                <div className="text-[#B3589D] mb-4">{item.icon}</div>
 
                 <h4 className="font-bold text-xl mb-2 text-gray-900">
                   {item.title}
@@ -125,11 +116,9 @@ const AboutPage = () => {
                 </p>
               </div>
             ))}
-
           </div>
         </div>
       </section>
-
     </main>
   );
 };
