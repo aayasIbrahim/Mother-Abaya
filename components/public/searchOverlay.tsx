@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useTransition } from "react";
-import { searchProducts } from "@/libs/actions/product";
+import { searchProducts } from "@/app/actions/product";
 import { Search, X, Loader2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 

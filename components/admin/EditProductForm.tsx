@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { updateProduct } from "@/libs/actions/product";
+import { updateProduct } from "@/app/actions/product";
 import { toast } from "react-hot-toast";
 
 // Types Define করা ভালো প্র্যাকটিস
@@ -34,10 +34,10 @@ interface ProductProps {
 }
 
 export default function EditProductForm({ product }: ProductProps) {
- const [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
-  
+
   // ১. ইমেজ ইউআরএল হ্যান্ডলিং (Safe access)
   const initialImageUrl = useMemo(() => {
     const img = product.images?.[0];
@@ -51,7 +51,8 @@ export default function EditProductForm({ product }: ProductProps) {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+      if (file.size > 5 * 1024 * 1024) {
+        // 5MB limit
         return toast.error("File is too large! Max 5MB.");
       }
       const reader = new FileReader();
@@ -63,9 +64,9 @@ export default function EditProductForm({ product }: ProductProps) {
   // ২. অপ্টিমাইজড ক্লায়েন্ট অ্যাকশন
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Default behavior বন্ধ করা
-    
+
     const formData = new FormData(e.currentTarget);
-    
+
     // ম্যানুয়ালি স্টেট ভ্যালু ইনজেক্ট করা (২ বার ক্লিক সমস্যা সমাধান করে)
     formData.set("category", category);
 
@@ -77,7 +78,7 @@ export default function EditProductForm({ product }: ProductProps) {
           toast.error(result.error);
         } else {
           toast.success("Piece Updated Successfully! ✨");
-          
+
           // রাউটার রিফ্রেশ এবং ব্যাক
           router.refresh();
           setTimeout(() => {
@@ -98,7 +99,10 @@ export default function EditProductForm({ product }: ProductProps) {
           href="/admin/products"
           className="group flex items-center gap-2 text-gray-500 hover:text-[#B3589D] transition-all font-bold"
         >
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          <ArrowLeft
+            size={20}
+            className="group-hover:-translate-x-1 transition-transform"
+          />
           Back to Inventory
         </Link>
       </div>
@@ -109,16 +113,21 @@ export default function EditProductForm({ product }: ProductProps) {
           <div className="absolute -top-6 -right-6 opacity-10 rotate-12">
             <RefreshCcw size={120} />
           </div>
-          <h1 className="text-3xl font-black italic tracking-widest">Edit Product</h1>
+          <h1 className="text-3xl font-black italic tracking-widest">
+            Edit Product
+          </h1>
           <p className="text-pink-100/80 text-sm font-medium mt-2">
             ID: <span className="font-mono text-xs">{product._id}</span>
           </p>
         </div>
 
         {/* Form */}
-        <form ref={formRef} onSubmit={handleSubmit} className="p-8 md:p-12 space-y-10">
+        <form
+          ref={formRef}
+          onSubmit={handleSubmit}
+          className="p-8 md:p-12 space-y-10"
+        >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-            
             {/* Input Wrapper Component style */}
             <FormInput label="Product Title" icon={<Package size={20} />}>
               <input
@@ -153,7 +162,10 @@ export default function EditProductForm({ product }: ProductProps) {
               />
             </FormInput>
 
-            <FormInput label="Discount Price" icon={<DollarSign size={20} className="text-pink-400" />}>
+            <FormInput
+              label="Discount Price"
+              icon={<DollarSign size={20} className="text-pink-400" />}
+            >
               <input
                 name="discountPrice"
                 type="number"
@@ -182,12 +194,13 @@ export default function EditProductForm({ product }: ProductProps) {
             </FormInput>
           </div>
 
-        
           {/* Image Upload Area */}
           <div className="space-y-3">
             <label className="text-sm font-bold text-gray-700 flex justify-between px-1">
-              Display Image 
-              <span className="text-[11px] text-[#B3589D] uppercase tracking-tighter">New upload replaces old</span>
+              Display Image
+              <span className="text-[11px] text-[#B3589D] uppercase tracking-tighter">
+                New upload replaces old
+              </span>
             </label>
             <div className="relative group h-72 w-full rounded-[2.5rem] border-2 border-dashed border-gray-200 bg-gray-50/50 hover:bg-gray-50 transition-all flex items-center justify-center overflow-hidden">
               <input
@@ -199,15 +212,24 @@ export default function EditProductForm({ product }: ProductProps) {
               />
               {preview ? (
                 <div className="relative w-full h-full p-6 animate-in zoom-in-95 duration-300">
-                  <img src={preview} alt="Preview" className="w-full h-full object-contain drop-shadow-md" />
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="w-full h-full object-contain drop-shadow-md"
+                  />
                   <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10">
-                    <RefreshCcw className="text-white animate-spin-slow" size={32} />
+                    <RefreshCcw
+                      className="text-white animate-spin-slow"
+                      size={32}
+                    />
                   </div>
                 </div>
               ) : (
                 <div className="text-center space-y-2">
                   <UploadCloud className="mx-auto text-gray-400" size={48} />
-                  <p className="text-sm font-bold text-gray-500">Click to Change Image</p>
+                  <p className="text-sm font-bold text-gray-500">
+                    Click to Change Image
+                  </p>
                 </div>
               )}
             </div>
@@ -215,7 +237,9 @@ export default function EditProductForm({ product }: ProductProps) {
 
           {/* Description Area */}
           <div className="space-y-3">
-            <label className="text-sm font-bold text-gray-700 px-1">Product Story / Details</label>
+            <label className="text-sm font-bold text-gray-700 px-1">
+              Product Story / Details
+            </label>
             <textarea
               name="description"
               rows={5}
@@ -229,16 +253,16 @@ export default function EditProductForm({ product }: ProductProps) {
             type="submit"
             disabled={isPending}
             className={`w-full py-6 rounded-[2.5rem] text-white font-black text-lg transition-all flex items-center justify-center gap-4 shadow-xl ${
-              isPending 
-              ? "bg-gray-400 cursor-not-allowed" 
-              : "bg-[#B3589D] hover:bg-[#9c4a88] hover:shadow-pink-200/50 active:scale-[0.98]"
+              isPending
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[#B3589D] hover:bg-[#9c4a88] hover:shadow-pink-200/50 active:scale-[0.98]"
             }`}
           >
             {isPending ? (
               <div className="w-7 h-7 border-4 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
               <>
-                <Save size={24} /> 
+                <Save size={24} />
                 <span>CONFIRM CHANGES</span>
               </>
             )}
@@ -258,7 +282,7 @@ export default function EditProductForm({ product }: ProductProps) {
         }
         .form-input-styled:focus {
           background: white;
-          border-color: #B3589D;
+          border-color: #b3589d;
           box-shadow: 0 0 0 4px rgba(179, 88, 157, 0.1);
         }
       `}</style>
@@ -267,7 +291,15 @@ export default function EditProductForm({ product }: ProductProps) {
 }
 
 // সাব-কম্পোনেন্ট ফর ক্লিন কোড
-function FormInput({ label, icon, children }: { label: string; icon: any; children: any }) {
+function FormInput({
+  label,
+  icon,
+  children,
+}: {
+  label: string;
+  icon: any;
+  children: any;
+}) {
   return (
     <div className="space-y-2">
       <label className="text-sm font-bold text-gray-700 ml-2">{label}</label>
