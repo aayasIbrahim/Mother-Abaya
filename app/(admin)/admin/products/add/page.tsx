@@ -13,7 +13,7 @@ import {
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
-import { addProduct } from "@/app/actions/product";
+import { addProduct } from "@/libs/actions/product";
 
 export default function AddProductPage() {
   const [isPending, startTransition] = useTransition();

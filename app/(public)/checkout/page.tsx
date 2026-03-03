@@ -2,7 +2,7 @@
 import React, { useState, useTransition } from "react";
 import { useCartStore } from "@/store/useCartStore";
 import { Truck, CreditCard, Smartphone, CheckCircle2 } from "lucide-react";
-import { createOrderAction } from "@/app/actions/order";
+import { createOrderAction } from "@/libs/actions/order";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
