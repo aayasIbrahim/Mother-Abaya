@@ -28,22 +28,19 @@ const OrderSchema = z.object({
     .min(1, "Cart cannot be empty"),
 });
 
-export async function createOrderAction(formData: any) {
-  // ১. সেশন শুরু (Atomic Transaction) - এটি নিশ্চিত করে যে হয় সব হবে, নয়তো কিছুই হবে না
-  const session = await mongoose.startSession();
-  session.startTransaction();
 
+
+export async function createOrderAction(formData: any) {
   try {
+    // ১. ডাটাবেস কানেকশন
     await connectDB();
 
     // ২. ইনপুট ভ্যালিডেশন
     const validatedData = OrderSchema.parse(formData);
 
-    // ৩. ডাটাবেস থেকে রিয়েল-টাইম প্রোডাক্ট ডাটা আনা
+    // ৩. প্রোডাক্ট ডাটা চেক করা
     const productIds = validatedData.items.map((i) => i.id);
-    const dbProducts = await Product.find({ _id: { $in: productIds } }).session(
-      session,
-    );
+    const dbProducts = await Product.find({ _id: { $in: productIds } });
 
     if (dbProducts.length !== productIds.length) {
       throw new Error("Some products in your cart are no longer available.");
@@ -58,15 +55,11 @@ export async function createOrderAction(formData: any) {
 
       if (!product) throw new Error("Product data mismatch.");
 
-      // সেফটি চেক: স্টক আছে কি না? (যদি আপনার মডেলে stock থাকে)
       if (product.stock < item.quantity) {
-        throw new Error(
-          `Sorry, only ${product.stock} units of ${product.name} are available.`,
-        );
+        throw new Error(`Sorry, only ${product.stock} units of ${product.name} are available.`);
       }
 
-      const itemPrice = product.price * item.quantity;
-      totalAmount += itemPrice;
+      totalAmount += product.price * item.quantity;
 
       orderItems.push({
         product: item.id,
@@ -76,43 +69,36 @@ export async function createOrderAction(formData: any) {
         price: product.price,
       });
 
-      // ৫. স্টক কমিয়ে দেওয়া (Inventory Update)
-      product.stock -= item.quantity;
-      await product.save({ session });
+      // ৫. সরাসরি স্টক আপডেট (Atomic Operation)
+      await Product.findByIdAndUpdate(item.id, {
+        $inc: { stock: -item.quantity }
+      });
     }
 
     // ৬. অর্ডার সেভ করা
-    const [newOrder] = await Order.create(
-      [
-        {
-          customer: {
-            name: validatedData.name,
-            email: validatedData.email,
-            phone: validatedData.phone,
-            address: validatedData.address,
-            city: validatedData.city,
-          },
-          items: orderItems,
-          totalAmount,
-          paymentMethod: validatedData.paymentMethod,
-          status: "pending",
-          notes: validatedData.notes,
-        },
-      ],
-      { session },
-    );
+    const newOrder = await Order.create({
+      customer: {
+        name: validatedData.name,
+        email: validatedData.email,
+        phone: validatedData.phone,
+        address: validatedData.address,
+        city: validatedData.city,
+      },
+      items: orderItems,
+      totalAmount,
+      paymentMethod: validatedData.paymentMethod,
+      status: "pending",
+      notes: validatedData.notes,
+    });
 
-    // ৭. ট্রানজ্যাকশন সম্পন্ন করা
-    await session.commitTransaction();
-    session.endSession();
+    const orderIdStr = newOrder._id.toString();
 
-    const orderIdStr = newOrder._id.toString()
-
-    // ৮. পেমেন্ট গেটওয়ে রিডাইরেক্ট লজিক (নিরাপদ URL হ্যান্ডলিং)
+    // ৭. রিডাইরেক্ট লজিক
     if (validatedData.paymentMethod !== "cod") {
       return {
         success: true,
-        url: `/checkout/payment?orderId=${newOrder._id}&amount=${totalAmount}`, // ব্যাকএন্ড থেকে জেনারেটেড ইউআরএল হবে এখানে
+        url: `/checkout/payment?orderId=${orderIdStr}&amount=${totalAmount}`,
+        orderId: orderIdStr,
       };
     }
 
@@ -121,10 +107,9 @@ export async function createOrderAction(formData: any) {
       message: "Order placed successfully!",
       orderId: orderIdStr,
     };
+
   } catch (error: any) {
-    // যদি কোনো এরর হয়, তবে ট্রানজ্যাকশন রোলব্যাক হবে (ডাটাবেসে কোনো অর্ধেক ডাটা থাকবে না)
-    await session.abortTransaction();
-    session.endSession();
+    console.error("CRITICAL_ORDER_ERROR:", error);
 
     if (error instanceof z.ZodError) {
       return {
@@ -133,10 +118,9 @@ export async function createOrderAction(formData: any) {
       };
     }
 
-    console.error("CRITICAL_ORDER_ERROR:", error);
     return {
       success: false,
-      error: error.message || "Security check failed. Please try again.",
+      error: error.message || "Failed to place order. Please try again.",
     };
   }
 }
