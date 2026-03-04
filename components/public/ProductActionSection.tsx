@@ -3,10 +3,9 @@ import React, { useState } from "react";
 import { useCartStore } from "@/store/useCartStore";
 import { Plus, Minus, ShoppingBag } from "lucide-react";
 import toast from "react-hot-toast";
-
 export default function ProductActionSection({ product }: { product: any }) {
-  const [quantity, setQuantity] = useState(1);
-  const [selectedSize, setSelectedSize] = useState("M");
+  const [quantity, setQuantity] = useState(0);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const addToCart = useCartStore((state) => state.addToCart);
 
   const sizeData = [
@@ -17,6 +16,14 @@ export default function ProductActionSection({ product }: { product: any }) {
   ];
 
   const handleAddToCart = () => {
+    if (!selectedSize) {
+      toast.error("Please select a size first!");
+      return;
+    }
+    if (quantity < 1) {
+      toast.error("Quantity must be at least 1");
+      return;
+    }
     addToCart({
       _id: product._id,
       name: product.name,

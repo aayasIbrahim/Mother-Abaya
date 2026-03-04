@@ -106,6 +106,8 @@ export async function createOrderAction(formData: any) {
     await session.commitTransaction();
     session.endSession();
 
+    const orderIdStr = newOrder._id.toString()
+
     // ৮. পেমেন্ট গেটওয়ে রিডাইরেক্ট লজিক (নিরাপদ URL হ্যান্ডলিং)
     if (validatedData.paymentMethod !== "cod") {
       return {
@@ -117,7 +119,7 @@ export async function createOrderAction(formData: any) {
     return {
       success: true,
       message: "Order placed successfully!",
-      orderId: newOrder._id,
+      orderId: orderIdStr,
     };
   } catch (error: any) {
     // যদি কোনো এরর হয়, তবে ট্রানজ্যাকশন রোলব্যাক হবে (ডাটাবেসে কোনো অর্ধেক ডাটা থাকবে না)

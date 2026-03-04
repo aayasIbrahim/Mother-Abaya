@@ -36,7 +36,7 @@ export default function CheckoutPage() {
 
         if (result.success) {
           toast.success(result.message || "Order placed successfully!");
-          clearCart(); // কার্ট ক্লিয়ার করুন
+          clearCart(); 
 
           if (result.url) {
             window.location.href = result.url; // পেমেন্ট গেটওয়েতে রিডাইরেক্ট

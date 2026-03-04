@@ -26,7 +26,7 @@ export default async function ShopPage({
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 mb-12 border-b border-white/40 pb-6">
           {/* Left Side: Text Info */}
           <div className="space-y-1">
-            <h2 className="text-2xl md:text-3xl font-black text-gray-800 tracking-tighter uppercase italic leading-none">
+            <h2 className="text-2xl md:text-3xl font-black text-black tracking-tighter uppercase italic leading-none">
               Our Collection
             </h2>
             <div className="flex items-center gap-2">

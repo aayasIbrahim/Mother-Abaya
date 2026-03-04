@@ -19,7 +19,7 @@ export default function SortSelector() {
       value={currentSort}
       onChange={handleSortChange}
       className="
-    w-full sm:w-auto 
+    w-full sm:w-auto text-black
     bg-white/60 backdrop-blur-md 
     border border-white/40 
     text-[11px] font-black uppercase tracking-widest 

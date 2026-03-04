@@ -1,17 +1,27 @@
+import mongoose from "mongoose";
 import connectDB from "@/libs/db";
 import Order from "@/models/Order";
 import { CheckCircle2, Package, Truck, Phone } from "lucide-react";
 import { notFound } from "next/navigation";
 interface PageProps {
   params: Promise<{ id: string }>;
-} 
-
+}
+export const dynamic = "force-dynamic";
 export default async function OrderSuccessPage({ params }: PageProps) {
   const { id } = await params;
-  await connectDB();
-  const order = await Order.findById(id).populate("items.product");
-  if (!order) notFound();
 
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    console.error("Invalid Order ID format:", id);
+    return notFound();
+  }
+
+  await connectDB();
+  const order = await Order.findById(id).lean();
+
+  if (!order) {
+    console.error("No order found in database with ID:", id);
+    return notFound();
+  }
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto bg-white rounded-3xl shadow-sm border p-8 md:p-12">
