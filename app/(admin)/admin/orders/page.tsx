@@ -3,85 +3,95 @@ import Order from "@/models/Order";
 import connectDB from "@/libs/db";
 import { Eye, Phone, Calendar } from "lucide-react";
 import StatusSelector from "@/components/admin/StatusSelector";
+import DeleteOrderBtn from "@/components/admin/DeleteOrderBtn";
 
 export default async function AdminOrdersPage() {
   await connectDB();
-  const orders = await Order.find().sort({ createdAt: -1 });
+
+  const orders = await Order.find().sort({ createdAt: -1 }).lean();
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-black uppercase mb-6">Order Management</h1>
+    <div className="p-6 max-w-7xl mx-auto">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-black uppercase tracking-tight">
+          Order Management
+        </h1>
+        <div className="text-xs font-bold text-gray-400 uppercase">
+          Total Orders: {orders.length}
+        </div>
+      </div>
 
-      <div className="overflow-x-auto bg-white rounded-2xl border shadow-sm">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-gray-50 border-b uppercase text-[10px] font-black">
+      <div className="overflow-hidden bg-white rounded-2xl border border-gray-100 shadow-sm">
+        <table className="w-full text-left border-collapse">
+          <thead className="bg-gray-50/50 border-b border-gray-100 uppercase text-[10px] font-black text-gray-500">
             <tr>
-              <th className="px-6 py-4">Order ID</th>
+              <th className="px-6 py-4">Order Info</th>
               <th className="px-6 py-4">Customer</th>
-              <th className="px-6 py-4">Total</th>
+              <th className="px-6 py-4">Amount</th>
               <th className="px-6 py-4">Status</th>
-              <th className="px-6 py-4">Actions</th>
+              <th className="px-6 py-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y">
-            {orders.map((order) => (
+          <tbody className="divide-y divide-gray-50">
+            {orders.map((order: any) => (
               <tr
-                key={order._id}
-                className="hover:bg-gray-50/50 transition-colors group"
+                key={order._id.toString()}
+                className="hover:bg-gray-50/30 transition-colors group"
               >
                 {/* অর্ডার আইডি এবং ডেট */}
                 <td className="px-6 py-4">
-                  <div className="font-mono text-[11px] text-gray-400 font-bold uppercase">
-                    #{order._id.toString().slice(-8)}
+                  <div className="font-mono text-[11px] text-gray-900 font-bold">
+                    #{order._id.toString().slice(-8).toUpperCase()}
                   </div>
-                  <div className="flex items-center gap-1 text-[10px] text-gray-400 mt-1">
-                    <Calendar size={10} />{" "}
-                    {new Date(order.createdAt).toLocaleDateString()}
+                  <div className="flex items-center gap-1 text-[10px] text-gray-400 mt-1 font-medium">
+                    <Calendar size={10} />
+                    {new Date(order.createdAt).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
                   </div>
                 </td>
 
                 {/* কাস্টমার ইনফো */}
                 <td className="px-6 py-4">
-                  <div className="font-black text-xs uppercase italic tracking-tight text-gray-800">
-                    {order.customer.name}
+                  <div className="font-bold text-xs uppercase text-gray-800">
+                    {order.customer?.name}
                   </div>
-                  <div className="flex items-center gap-1 text-gray-400 text-[10px] font-bold mt-1">
-                    <Phone size={10} /> {order.customer.phone}
+                  <div className="flex items-center gap-1 text-gray-400 text-[10px] font-semibold mt-1">
+                    <Phone size={10} /> {order.customer?.phone}
                   </div>
                 </td>
 
-                {/* টোটাল প্রাইস */}
+                {/* প্রাইস */}
                 <td className="px-6 py-4">
-                  <div className="font-black text-sm text-[#B3589D]">
-                    ৳{order.totalAmount.toLocaleString()}
+                  <div className="font-black text-sm text-gray-900">
+                    ৳{order.totalAmount?.toLocaleString()}
                   </div>
-                  <div className="text-[9px] text-gray-400 uppercase font-black tracking-widest">
+                  <div className="text-[9px] text-gray-400 uppercase font-black tracking-widest mt-0.5">
                     {order.paymentMethod}
                   </div>
                 </td>
 
-                {/* স্ট্যাটাস ব্যাজ */}
+                {/* স্ট্যাটাস */}
                 <td className="px-6 py-4">
                   <StatusBadge status={order.status} />
                 </td>
 
-                {/* অ্যাকশন এবং ড্রপডাউন */}
+                {/* অ্যাকশনস */}
                 <td className="px-6 py-4">
-                  <div className="flex items-center gap-4">
-                    {/* স্ট্যাটাস আপডেট ড্রপডাউন */}
+                  <div className="flex items-center justify-end gap-2">
                     <StatusSelector
                       orderId={order._id.toString()}
                       currentStatus={order.status}
                     />
-
-                    {/* ডিটেইলস পেজে যাওয়ার বাটন */}
                     <Link
                       href={`/admin/orders/${order._id}`}
-                      className="p-2 hover:bg-black hover:text-white rounded-full transition-all text-gray-400 group-hover:text-black"
-                      title="View Full Details"
+                      className="p-2 hover:bg-gray-100 text-gray-400 hover:text-black rounded-full transition-all"
                     >
                       <Eye size={16} />
                     </Link>
+                    <DeleteOrderBtn orderId={order._id.toString()} />
                   </div>
                 </td>
               </tr>
@@ -93,15 +103,21 @@ export default async function AdminOrdersPage() {
   );
 }
 
+// প্রফেশনাল স্ট্যাটাস ব্যাজ
 const StatusBadge = ({ status }: { status: string }) => {
-  const colors: any = {
-    pending: "bg-yellow-100 text-yellow-700",
-    delivered: "bg-green-100 text-green-700",
-    cancelled: "bg-red-100 text-red-700",
+  const configs: any = {
+    pending: "bg-amber-50 text-amber-600 border-amber-100",
+    processing: "bg-blue-50 text-blue-600 border-blue-100",
+    shipped: "bg-purple-50 text-purple-600 border-purple-100",
+    delivered: "bg-emerald-50 text-emerald-600 border-emerald-100",
+    cancelled: "bg-rose-50 text-rose-600 border-rose-100",
   };
+
   return (
     <span
-      className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${colors[status]}`}
+      className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase border ${
+        configs[status] || "bg-gray-50 text-gray-600"
+      }`}
     >
       {status}
     </span>

@@ -148,3 +148,13 @@ export async function updateOrderStatus(orderId: string, newStatus: string) {
     return { success: false, error: error.message };
   }
 }
+export async function deleteOrder(orderId: string) {
+  try {
+    await connectDB();
+    await Order.findByIdAndDelete(orderId);
+    revalidatePath("/admin/orders"); 
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: "Failed to delete order" };
+  }
+}
