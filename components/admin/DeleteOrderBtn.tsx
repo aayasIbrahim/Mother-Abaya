@@ -16,7 +16,6 @@ export default function DeleteOrderBtn({ orderId }: { orderId: string }) {
     
     if (!isConfirmed) return;
 
-    // useTransition wraps the server action for better UI performance
     startTransition(async () => {
       try {
         const res = await deleteOrder(orderId);
