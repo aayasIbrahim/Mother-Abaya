@@ -1,5 +1,6 @@
 import connectDB from "@/libs/db";
 import Order from "@/models/Order";
+import mongoose from "mongoose";
 import { notFound } from "next/navigation";
 import { Package, User, MapPin, CreditCard, Clock } from "lucide-react";
 import StatusSelector from "@/components/admin/StatusSelector";
@@ -10,6 +11,9 @@ export default async function OrderDetailsPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return notFound();
+  }
   await connectDB();
 
   // প্রোডাক্টের ডিটেইলস সহ অর্ডারটি নিয়ে আসা
@@ -48,7 +52,7 @@ export default async function OrderDetailsPage({
               <Package size={14} /> Items Ordered
             </div>
             <div className="divide-y">
-              {order.items.map((item: any) => (
+              {order?.items.map((item: any) => (
                 <div key={item._id} className="p-4 flex gap-4 items-center">
                   <img
                     src={item.product?.images[0] || "/placeholder.jpg"}

@@ -28,8 +28,6 @@ const OrderSchema = z.object({
     .min(1, "Cart cannot be empty"),
 });
 
-
-
 export async function createOrderAction(formData: any) {
   try {
     // ১. ডাটাবেস কানেকশন
@@ -56,7 +54,9 @@ export async function createOrderAction(formData: any) {
       if (!product) throw new Error("Product data mismatch.");
 
       if (product.stock < item.quantity) {
-        throw new Error(`Sorry, only ${product.stock} units of ${product.name} are available.`);
+        throw new Error(
+          `Sorry, only ${product.stock} units of ${product.name} are available.`,
+        );
       }
 
       totalAmount += product.price * item.quantity;
@@ -71,7 +71,7 @@ export async function createOrderAction(formData: any) {
 
       // ৫. সরাসরি স্টক আপডেট (Atomic Operation)
       await Product.findByIdAndUpdate(item.id, {
-        $inc: { stock: -item.quantity }
+        $inc: { stock: -item.quantity },
       });
     }
 
@@ -107,7 +107,6 @@ export async function createOrderAction(formData: any) {
       message: "Order placed successfully!",
       orderId: orderIdStr,
     };
-
   } catch (error: any) {
     console.error("CRITICAL_ORDER_ERROR:", error);
 
@@ -123,7 +122,7 @@ export async function createOrderAction(formData: any) {
       error: error.message || "Failed to place order. Please try again.",
     };
   }
-}
+} 
 
 // import { auth } from "@clerk/nextjs/server";
 

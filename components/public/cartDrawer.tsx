@@ -34,7 +34,6 @@ export default function CartDrawer() {
 
       {/* Drawer Container */}
       <div className="relative w-full max-w-[400px] bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-500 ease-out">
-        
         {/* Header */}
         <div className="p-5 flex justify-between items-center border-b border-gray-50">
           <div className="flex items-center gap-3">
@@ -64,20 +63,23 @@ export default function CartDrawer() {
                 <p className="text-[13px] font-bold uppercase tracking-widest text-gray-500">
                   Your cart is empty
                 </p>
-                <button 
-                   onClick={closeCart}
-                   className="text-[11px] font-black text-[#B3589D] underline underline-offset-4 uppercase"
+                <Link
+                  href="/"
+                  onClick={closeCart}
+                  className="text-[11px] font-black text-[#B3589D] underline underline-offset-4 uppercase"
                 >
-                    Continue Shopping
-                </button>
+                  Continue Shopping
+                </Link>
               </div>
             </div>
           ) : (
             <div className="space-y-6">
               {/* Clear Cart Button */}
               <div className="flex justify-end">
-                <button 
-                  onClick={() => { if(confirm("Clear all items?")) clearCart() }}
+                <button
+                  onClick={() => {
+                    if (confirm("Clear all items?")) clearCart();
+                  }}
                   className="flex items-center gap-1.5 text-[10px] font-bold text-red-400 hover:text-red-600 transition-colors uppercase tracking-tighter"
                 >
                   <Trash2 size={12} />
@@ -86,7 +88,10 @@ export default function CartDrawer() {
               </div>
 
               {cart.map((item) => (
-                <div key={item._id + item.size} className="flex gap-4 p-3 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                <div
+                  key={item._id + item.size}
+                  className="flex gap-4 p-3 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
+                >
                   {/* Product Image */}
                   <div className="w-20 h-24 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100">
                     <img
@@ -113,7 +118,13 @@ export default function CartDrawer() {
                       {/* Quantity Selector */}
                       <div className="flex items-center bg-gray-50 rounded-lg p-0.5 border border-gray-100">
                         <button
-                          onClick={() => updateQuantity(item._id, item.size, Math.max(1, item.quantity - 1))}
+                          onClick={() =>
+                            updateQuantity(
+                              item._id,
+                              item.size,
+                              Math.max(1, item.quantity - 1),
+                            )
+                          }
                           className="w-7 h-7 flex items-center justify-center text-gray-500 hover:text-black transition-colors"
                         >
                           <Minus size={12} strokeWidth={3} />
@@ -122,7 +133,13 @@ export default function CartDrawer() {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => updateQuantity(item._id, item.size, item.quantity + 1)}
+                          onClick={() =>
+                            updateQuantity(
+                              item._id,
+                              item.size,
+                              item.quantity + 1,
+                            )
+                          }
                           className="w-7 h-7 flex items-center justify-center text-gray-500 hover:text-black transition-colors"
                         >
                           <Plus size={12} strokeWidth={3} />
