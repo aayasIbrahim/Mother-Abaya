@@ -4,7 +4,6 @@ import connectDB from "@/libs/db";
 import Product from "@/models/Product";
 import { z } from "zod";
 import Order from "@/models/Order";
-import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
 
 const OrderSchema = z.object({
@@ -143,6 +142,7 @@ export async function updateOrderStatus(orderId: string, newStatus: string) {
     // ২. পেজ রিভ্যালিডেট করা যাতে সাথে সাথে আপডেট দেখা যায়
     revalidatePath("/admin/orders");
     revalidatePath(`/admin/orders/${orderId}`);
+    revalidatePath(`/admin`);
 
     return { success: true, message: "Status updated!" };
   } catch (error: any) {
