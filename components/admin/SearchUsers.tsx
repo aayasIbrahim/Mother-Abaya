@@ -57,7 +57,7 @@ export default function SearchUsers({
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder="Search users..."
-        className="w-full pl-12 pr-10 py-4 bg-white border border-gray-100 rounded-[1.5rem] text-sm font-bold shadow-sm outline-none focus:ring-2 focus:ring-black transition-all"
+        className="w-full pl-12 pr-10 py-4 bg-white border border-[3px] border-[#B3589D] rounded-[1.5rem] text-sm font-bold shadow-sm outline-none focus:ring-2  focus:ring-[#B3589D] transition-all"
       />
 
       {searchTerm && (

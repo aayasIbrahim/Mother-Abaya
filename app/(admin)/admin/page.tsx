@@ -71,11 +71,12 @@ export default async function AdminDashboard() {
   return (
     <div className="space-y-8 p-4 md:p-0">
       {/* Header */}
-      <div className="flex justify-between items-end">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
         <div>
-          <h1 className="text-3xl font-black uppercase italic tracking-tighter text-gray-900">Dashboard</h1>
-          <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">Real-time Store Performance</p>
+          <h1 className="text-2xl font-black text-gray-800 tracking-tight">Dashboard</h1>
+          <p className="text-sm text-gray-500 font-medium">Manage your Mother Abaya collection</p>
         </div>
+        
       </div>
 
       {/* Stats Grid */}

@@ -140,9 +140,9 @@ export async function updateOrderStatus(orderId: string, newStatus: string) {
     await Order.findByIdAndUpdate(orderId, { status: newStatus });
 
     // ২. পেজ রিভ্যালিডেট করা যাতে সাথে সাথে আপডেট দেখা যায়
+    revalidatePath(`/admin`);
     revalidatePath("/admin/orders");
     revalidatePath(`/admin/orders/${orderId}`);
-    revalidatePath(`/admin`);
 
     return { success: true, message: "Status updated!" };
   } catch (error: any) {

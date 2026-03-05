@@ -11,17 +11,22 @@ export default async function AdminOrdersPage() {
   const orders = await Order.find().sort({ createdAt: -1 }).lean();
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-black uppercase tracking-tight">
-          Order Management
-        </h1>
-        <div className="text-xs font-bold text-gray-400 uppercase">
+    <div className="max-w-7xl mx-auto">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm mb-6">
+        <div>
+          <h1 className="text-2xl font-black text-gray-800 tracking-tight">
+            Order Mangement
+          </h1>
+          <p className="text-sm text-gray-500 font-medium">
+            Manage your Mother Abaya Order
+          </p>
+        </div>
+        <div className="flex items-center gap-2 bg-[#B3589D] text-white px-6 py-3 rounded-2xl font-bold hover:bg-[#a04a8b] transition-all shadow-lg">
           Total Orders: {orders.length}
         </div>
       </div>
 
-      <div className="overflow-hidden bg-white rounded-2xl border border-gray-100 shadow-sm">
+      <div className="overflow-hidden bg-white rounded-2xl border border-gray-100 shadow-sm overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead className="bg-gray-50/50 border-b border-gray-100 uppercase text-[10px] font-black text-gray-500">
             <tr>

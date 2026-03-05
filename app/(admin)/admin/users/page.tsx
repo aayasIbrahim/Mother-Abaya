@@ -5,7 +5,7 @@ import {
   ShieldCheck,
   Calendar,
   Search,
-  Users,
+
   Trash2,
 } from "lucide-react";
 import RoleSelector from "@/components/admin/RoleSelector";
@@ -39,15 +39,15 @@ export default async function AdminUsersPage({
   const users = await User.find(filter).sort({ createdAt: -1 }).lean();
 
   return (
-    <div className="p-6 space-y-8 max-w-7xl mx-auto">
+    <div className="space-y-8 max-w-7xl mx-auto">
       {/* Header & Search */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
         <div>
-          <h1 className="text-3xl font-black uppercase italic tracking-tighter text-gray-900 flex items-center gap-2">
-            <Users size={32} /> User Management
+          <h1 className="text-2xl font-black text-gray-800 tracking-tight">
+             User Management
           </h1>
-          <p className="text-xs text-gray-400 font-bold uppercase mt-1">
-            {users.length} Users Found in Database
+          <p className="text-sm text-gray-500 font-medium">
+            {users.length} Users Found in Mother Abaya
           </p>
         </div>
 
@@ -75,7 +75,7 @@ export default async function AdminUsersPage({
                 >
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-black text-white flex items-center justify-center font-black text-sm shadow-lg shadow-black/10">
+                      <div className="w-12 h-12 rounded-2xl bg-[#B3589D]  text-white flex items-center justify-center font-black text-sm shadow-lg shadow-black/10">
                         {user.name?.slice(0, 2).toUpperCase()}
                       </div>
                       <div>
