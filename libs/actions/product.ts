@@ -5,7 +5,7 @@ import Product from "@/models/Product";
 import { z } from "zod";
 import Order from "@/models/Order";
 import { revalidatePath } from "next/cache";
-// import { initiatePayment } from "@/libs/payment"; 
+// import { initiatePayment } from "@/libs/payment";
 import { uploadToCloudinary, deleteFromCloudinary } from "@/libs/cloudinary";
 
 export const addProduct = async (formData: FormData) => {
@@ -59,6 +59,7 @@ export const addProduct = async (formData: FormData) => {
     });
 
     revalidatePath("/admin/products");
+    revalidatePath(`/admin`);
     revalidatePath("/");
     return { success: true };
   } catch (error: any) {
@@ -191,5 +192,3 @@ export async function searchProducts(query: string) {
     return [];
   }
 }
-
-

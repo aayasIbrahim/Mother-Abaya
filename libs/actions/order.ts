@@ -153,6 +153,7 @@ export async function deleteOrder(orderId: string) {
     await connectDB();
     await Order.findByIdAndDelete(orderId);
     revalidatePath("/admin/orders"); 
+    revalidatePath(`/admin`)
     return { success: true };
   } catch (error) {
     return { success: false, error: "Failed to delete order" };
