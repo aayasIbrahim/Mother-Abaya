@@ -19,12 +19,15 @@ const OrderSchema = z.object({
   items: z
     .array(
       z.object({
-        id: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid Product ID"), // মঙ্গোডিবি আইডি চেক
-        quantity: z.number().min(1).max(10), // একবারে ১০টির বেশি নয়
-        size: z.string().min(1),
+        id: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid Product ID"),
+        quantity: z
+          .number()
+          .min(1, "Minimum 1 quantity required")
+          .max(10, "You cannot order more than 10 units at once"),
+        size: z.string().min(1, "Please select a size"),
       }),
     )
-    .min(1, "Cart cannot be empty"),
+    .min(1, "Your cart cannot be empty"),
 });
 
 export async function createOrderAction(formData: any) {
@@ -51,21 +54,26 @@ export async function createOrderAction(formData: any) {
       const product = dbProducts.find((p) => p._id.toString() === item.id);
 
       if (!product) throw new Error("Product data mismatch.");
-
+      if (product.stock <= 0) {
+        throw new Error(`Sorry, ${product.name} is currently out of stock.`);
+      }
       if (product.stock < item.quantity) {
         throw new Error(
-          `Sorry, only ${product.stock} units of ${product.name} are available.`,
+          `Only ${product.stock} units of ${product.name} are available. Please reduce the quantity.`,
         );
       }
+      // ✅ লজিক: ডিসকাউন্ট প্রাইস থাকলে সেটা নাও, না থাকলে রেগুলার প্রাইস
+      const currentPrice =
+        product.discountPrice > 0 ? product.discountPrice : product.price;
 
-      totalAmount += product.price * item.quantity;
+      totalAmount += currentPrice * item.quantity;
 
       orderItems.push({
         product: item.id,
         name: product.name,
         quantity: item.quantity,
         size: item.size,
-        price: product.price,
+        price: currentPrice,
       });
 
       // ৫. সরাসরি স্টক আপডেট (Atomic Operation)

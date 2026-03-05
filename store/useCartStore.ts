@@ -4,6 +4,7 @@ import { persist } from "zustand/middleware";
 export interface CartItem {
   _id: string;
   name: string;
+  discountPrice: number;
   price: number;
   image: string;
   size: string;
@@ -25,7 +26,8 @@ interface CartState {
 
 export const useCartStore = create<CartState>()(
   persist(
-    (set, get) => ({ // এখানে 'get' যোগ করা হয়েছে লজিক রিড করার জন্য
+    (set, get) => ({
+      // এখানে 'get' যোগ করা হয়েছে লজিক রিড করার জন্য
       cart: [],
       isOpen: false,
       openCart: () => set({ isOpen: true }),
@@ -34,7 +36,7 @@ export const useCartStore = create<CartState>()(
       addToCart: (newItem) =>
         set((state) => {
           const existingItemIndex = state.cart.findIndex(
-            (item) => item._id === newItem._id && item.size === newItem.size
+            (item) => item._id === newItem._id && item.size === newItem.size,
           );
 
           if (existingItemIndex !== -1) {
@@ -48,7 +50,7 @@ export const useCartStore = create<CartState>()(
       removeFromCart: (id, size) =>
         set((state) => ({
           cart: state.cart.filter(
-            (item) => !(item._id === id && item.size === size)
+            (item) => !(item._id === id && item.size === size),
           ),
         })),
 
@@ -57,7 +59,7 @@ export const useCartStore = create<CartState>()(
           cart: state.cart.map((item) =>
             item._id === id && item.size === size
               ? { ...item, quantity }
-              : item
+              : item,
           ),
         })),
 
@@ -68,13 +70,19 @@ export const useCartStore = create<CartState>()(
       },
 
       // ২. মোট প্রাইস বের করার লজিক
+
       getTotalPrice: () => {
         const { cart } = get();
-        return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+        return cart.reduce((total, item) => {
+          // ইন্ডাস্ট্রিয়াল লজিক: যদি ডিসকাউন্ট প্রাইস থাকে এবং তা ০ থেকে বেশি হয় তবে সেটি নাও,
+          // অন্যথায় রেগুলার প্রাইস ব্যবহার করো।
+          const effectivePrice =
+            item.discountPrice > 0 ? item.discountPrice : item.price;
+          return total + effectivePrice * item.quantity;
+        }, 0);
       },
-
       clearCart: () => set({ cart: [] }),
     }),
-    { name: "mother-abaya-storage" }
-  )
+    { name: "mother-abaya-storage" },
+  ),
 );

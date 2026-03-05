@@ -36,7 +36,7 @@ export default function CheckoutPage() {
 
         if (result.success) {
           toast.success(result.message || "Order placed successfully!");
-          clearCart(); 
+          clearCart();
 
           if (result.url) {
             window.location.href = result.url; // পেমেন্ট গেটওয়েতে রিডাইরেক্ট
@@ -141,7 +141,7 @@ export default function CheckoutPage() {
                       className="w-full h-full object-cover"
                       alt=""
                     />
-                    <span className="absolute -top-1 -right-1 bg-black text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                    <span className="absolute -top-0 -right-0 bg-pink-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
                       {item.quantity}
                     </span>
                   </div>
@@ -152,9 +152,23 @@ export default function CheckoutPage() {
                     <p className="text-[10px] text-gray-400 font-bold uppercase mt-1">
                       Size: {item.size}
                     </p>
-                    <p className="text-xs font-black mt-1">
-                      ৳{item.price.toLocaleString()}
+
+                    {/* ১. বর্তমান দাম (ডিসকাউন্ট থাকলে সেটা, না থাকলে আসলটা) */}
+                    <p className="text-xs font-black text-gray-900">
+                      ৳
+                      {(item.discountPrice > 0
+                        ? item.discountPrice
+                        : item.price
+                      ).toLocaleString()}
                     </p>
+
+                    {/* ২. যদি ডিসকাউন্ট থাকে, তবে আগের দামটি ছোট করে কেটে দেখানো (Industry Standard) */}
+                    {item.discountPrice > 0 &&
+                      item.discountPrice < item.price && (
+                        <p className="text-[10px] text-pink-900 font-bold line-through">
+                          ৳{item.price.toLocaleString()}
+                        </p>
+                      )}
                   </div>
                 </div>
               ))}
