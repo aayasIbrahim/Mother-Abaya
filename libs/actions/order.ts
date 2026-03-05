@@ -90,7 +90,8 @@ export async function createOrderAction(formData: any) {
       status: "pending",
       notes: validatedData.notes,
     });
-
+    revalidatePath("/admin/orders");
+    revalidatePath("/admin");
     const orderIdStr = newOrder._id.toString();
 
     // ৭. রিডাইরেক্ট লজিক
@@ -122,7 +123,7 @@ export async function createOrderAction(formData: any) {
       error: error.message || "Failed to place order. Please try again.",
     };
   }
-} 
+}
 
 // import { auth } from "@clerk/nextjs/server";
 
@@ -152,8 +153,8 @@ export async function deleteOrder(orderId: string) {
   try {
     await connectDB();
     await Order.findByIdAndDelete(orderId);
-    revalidatePath("/admin/orders"); 
-    revalidatePath(`/admin`)
+    revalidatePath("/admin/orders");
+    revalidatePath(`/admin`);
     return { success: true };
   } catch (error) {
     return { success: false, error: "Failed to delete order" };
