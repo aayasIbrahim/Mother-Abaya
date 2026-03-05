@@ -227,7 +227,7 @@ export default function CheckoutPage() {
                 type="submit"
                 form="checkout-form"
                 disabled={isPending}
-                className="w-full py-5 bg-black text-white rounded-2xl font-black text-sm uppercase tracking-[0.2em] hover:bg-gray-900 transition-all active:scale-[0.98] disabled:bg-gray-400"
+                className="w-full py-5 bg-pink-800 text-white rounded-2xl font-black text-sm uppercase tracking-[0.2em] hover:bg-pink-900 transition-all active:scale-[0.98] disabled:bg-gray-400"
               >
                 {isPending
                   ? "Processing..."
@@ -246,7 +246,7 @@ export default function CheckoutPage() {
 // হেল্পার কম্পোনেন্ট: ইনপুট ফিল্ড
 const InputField = ({ label, required, ...props }: any) => (
   <div className="space-y-1 flex-1">
-    <label className="text-[10px] font-black uppercase text-gray-400 ml-1">
+    <label className="text-[10px] font-black uppercase text-black ml-1">
       {label} {required && "*"}
     </label>
     <input

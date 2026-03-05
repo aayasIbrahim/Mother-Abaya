@@ -27,7 +27,8 @@ export default function ProductActionSection({ product }: { product: any }) {
     addToCart({
       _id: product._id,
       name: product.name,
-      price: product.discountPrice || product.price,
+      price: product.price,
+      discountPrice: product.discountPrice || 0,
       image:
         typeof product.images[0] === "string"
           ? product.images[0]
