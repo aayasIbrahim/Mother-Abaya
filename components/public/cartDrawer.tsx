@@ -184,9 +184,24 @@ export default function CartDrawer() {
                       </div>
 
                       {/* Price */}
-                      <span className="text-[14px] font-black text-gray-900">
-                        ৳{(item.price * item.quantity).toLocaleString()}
-                      </span>
+                      <div className="flex flex-col text-right">
+                        {/* ক্যালকুলেটেড সাবটোটাল */}
+                        <span className="text-[14px] font-black text-black">
+                          ৳
+                          {(
+                            (item.discountPrice > 0
+                              ? item.discountPrice
+                              : item.price) * item.quantity
+                          ).toLocaleString()}
+                        </span>
+
+                        {/* যদি ডিসকাউন্ট থাকে, তবে ছোট করে আসল দামটি কাটা (Strikethrough) অবস্থায় দেখানো ভালো UX */}
+                        {item.discountPrice > 0 && (
+                          <span className="text-[10px] font-bold text-red-500 line-through">
+                            ৳{(item.price * item.quantity).toLocaleString()}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -43,89 +43,124 @@ export default function CartPage() {
               Your cart is currently empty.
             </div>
           ) : (
-            cart.map((item) => (
-              <div
-                key={item._id + item.size}
-                className="grid grid-cols-1 md:grid-cols-12 items-center py-6 border-b border-gray-50 gap-4"
-              >
-                {/* Product Info */}
-                <div className="col-span-6 flex items-center gap-4">
-                  <button
-                    onClick={() => {
-                      removeFromCart(item._id, item.size);
-                      // প্রফেশনাল পিঙ্ক টোস্ট ফিডব্যাক
-                      toast.error(`${item.name} removed from cart`, {
-                        icon: "🗑️",
-                        style: {
-                          borderRadius: "10px",
-                          background: "#B3589D",
-                          color: "#fff",
-                          fontSize: "12px",
-                          fontWeight: "bold",
-                          textTransform: "uppercase",
-                        },
-                      });
-                    }}
-                    className="w-8 h-8 flex items-center justify-center rounded-full text-gray-300 hover:text-red-500 hover:bg-red-50 transition-all group active:scale-75"
-                    title="Remove Item"
-                  >
-                    <Trash2 size={18} 
-                    
-                      className="group-hover:rotate-90 transition-transform duration-300  text-pink-500 hover:text-red-500"
+            cart.map((item) => {
+              const activePrice =
+                item.discountPrice > 0 ? item.discountPrice : item.price;
+              const itemSubtotal = activePrice * item.quantity;
+              return (
+                <div
+                  key={item._id + item.size}
+                  className="grid grid-cols-1 md:grid-cols-12 items-center py-6 border-b border-gray-50 gap-4"
+                >
+                  {/* Product Info */}
+                  <div className="col-span-6 flex items-center gap-4">
+                    <button
+                      onClick={() => {
+                        removeFromCart(item._id, item.size);
+                        // প্রফেশনাল পিঙ্ক টোস্ট ফিডব্যাক
+                        toast.error(`${item.name} removed from cart`, {
+                          icon: "🗑️",
+                          style: {
+                            borderRadius: "10px",
+                            background: "#B3589D",
+                            color: "#fff",
+                            fontSize: "12px",
+                            fontWeight: "bold",
+                            textTransform: "uppercase",
+                          },
+                        });
+                      }}
+                      className="w-8 h-8 flex items-center justify-center rounded-full text-gray-300 hover:text-red-500 hover:bg-red-50 transition-all group active:scale-75"
+                      title="Remove Item"
+                    >
+                      <Trash2
+                        size={18}
+                        className="group-hover:rotate-90 transition-transform duration-300  text-pink-500 hover:text-red-500"
+                      />
+                    </button>
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-20 h-24 object-cover rounded-sm"
                     />
-                  </button>
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-20 h-24 object-cover rounded-sm"
-                  />
-                  <div>
-                    <h3 className="text-sm font-bold uppercase">
-                      {item.name} — {item.size}
-                    </h3>
+                    <div>
+                      <h3 className="text-sm font-bold uppercase">
+                        {item.name} — {item.size}
+                      </h3>
+                    </div>
+                  </div>
+
+                  {/* Price */}
+                  <div className="col-span-2 text-center text-sm font-medium">
+                    <div className="flex flex-col">
+                      <span className="text-sm font-bold text-gray-900">
+                        ৳{activePrice.toLocaleString()}
+                      </span>
+                      {/* যদি ডিসকাউন্ট থাকে তবে আগের দাম কাটা অবস্থায় দেখাবে */}
+                      {item.discountPrice > 0 && (
+                        <span className="text-[10px] text-red-400 line-through font-medium">
+                          ৳{item.price.toLocaleString()}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Quantity */}
+                  <div className="col-span-2 flex justify-center">
+                    <div className="flex items-center border border-pink-200 rounded-lg p-1 bg-white shadow-sm">
+                      <button
+                        onClick={() =>
+                          updateQuantity(
+                            item._id,
+                            item.size,
+                            Math.max(1, item.quantity - 1),
+                          )
+                        }
+                        className="p-2 text-black hover:text-[#B3589D]"
+                      >
+                        <Minus size={14} />
+                      </button>
+                      <span className="w-8 text-center font-bold text-sm">
+                        {item.quantity}
+                      </span>
+                      <button
+                        onClick={() =>
+                          updateQuantity(item._id, item.size, item.quantity + 1)
+                        }
+                        className="p-2 text-black hover:text-[#B3589D]"
+                      >
+                        <Plus size={14} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Total */}
+
+                  {/* Subtotal Section */}
+                  <div className="col-span-2 text-right">
+                    <div className="flex flex-col items-end">
+                      {/* মেইন সাবটোটাল যা কাস্টমার পে করবে */}
+                      <span className="text-sm font-black text-gray-900 tracking-tight">
+                        ৳
+                        {(
+                          (item.discountPrice > 0
+                            ? item.discountPrice
+                            : item.price) * item.quantity
+                        ).toLocaleString()}
+                        .00
+                      </span>
+
+                      {/* যদি ডিসকাউন্ট থাকে, তবে আসল দামটি (Original Subtotal) ছোট করে নিচে কাটা অবস্থায় দেখাবে */}
+                      {item.discountPrice > 0 && (
+                        <span className="text-[10px] font-bold text-red-300 line-through">
+                          ৳{(item.price * item.quantity).toLocaleString()}.00
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
-
-                {/* Price */}
-                <div className="col-span-2 text-center text-sm font-medium">
-                  {item.price.toLocaleString()}.00৳
-                </div>
-
-                {/* Quantity */}
-                <div className="col-span-2 flex justify-center">
-                  <div className="flex items-center border border-pink-200 rounded-lg p-1 bg-white shadow-sm">
-                    <button
-                      onClick={() =>
-                        updateQuantity(
-                          item._id,
-                          item.size,
-                          Math.max(1, item.quantity - 1),
-                        )
-                      }
-                      className="p-2 text-black hover:text-[#B3589D]"
-                    >
-                      <Minus size={14} />
-                    </button>
-                    <span className="w-8 text-center font-bold text-sm">
-                      {item.quantity}
-                    </span>
-                    <button
-                      onClick={() =>
-                        updateQuantity(item._id, item.size, item.quantity + 1)
-                      }
-                      className="p-2 text-black hover:text-[#B3589D]"
-                    >
-                      <Plus size={14} />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Total */}
-                <div className="col-span-2 text-right text-sm font-bold">
-                  {(item.price * item.quantity).toLocaleString()}.00৳
-                </div>
-              </div>
-            ))
+              );
+            })
           )}
 
           {/* Coupon Section */}
@@ -136,11 +171,11 @@ export default function CartPage() {
                 placeholder="Coupon code"
                 className="bg-[#f2f2f2] px-4 py-2 text-sm outline-none border border-transparent focus:border-gray-200 rounded-sm"
               />
-              <button className="bg-black text-white px-6 py-2 text-[11px] font-bold uppercase tracking-widest rounded-sm hover:bg-gray-800">
+              <button className="bg-[#B3589D] hover:bg-pink-800  text-white px-6 py-2 text-[11px] font-bold uppercase tracking-widest rounded-sm ">
                 Apply coupon
               </button>
             </div>
-            <button className="bg-[#8c8c8c] text-white px-6 py-2 text-[11px] font-bold uppercase tracking-widest rounded-sm hover:bg-gray-700">
+            <button className="bg-[#B3589D] hover:bg-pink-800  text-white px-6 py-2 text-[11px] font-bold uppercase tracking-widest rounded-sm ">
               Update cart
             </button>
           </div>
@@ -183,7 +218,7 @@ export default function CartPage() {
 
             <Link
               href="/checkout"
-              className="block w-full mt-8 bg-black text-white text-center py-4 rounded-sm text-[12px] font-bold uppercase tracking-[0.2em] hover:bg-gray-800 transition-all"
+              className="block w-full mt-8   text-white text-center py-4 rounded-sm text-[12px] font-bold uppercase tracking-[0.2em] bg-[#B3589D] hover:bg-pink-800 transition-all"
             >
               Proceed to checkout
             </Link>
