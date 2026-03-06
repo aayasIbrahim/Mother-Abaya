@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛍️ Mother Abaya | Premium E-Commerce Platform
 
-## Getting Started
+Mother Abaya is a high-performance, modern, and fully responsive e-commerce platform specifically designed for Islamic fashion and Abaya collections. It delivers a premium shopping experience for users while providing a robust, data-driven admin control panel for business management.
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ✨ Key Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🛒 User Experience (UX)
+- **Modern Shopping Cart:** Features a sliding side-drawer with real-time state synchronization using Zustand.
+- **Dynamic Filtering:** Advanced product filtering by category, size, and price range.
+- **Premium Checkout:** An optimized one-page checkout flow with integrated coupon support and shipping calculations.
+- **Smart Pricing Logic:** Automated calculation for `discountPrice` vs. regular `price` across the entire app.
+- **Fully Responsive:** Pixel-perfect layout optimized for Mobile, Tablet, and Desktop devices.
 
-## Learn More
+### 🛠️ Admin Dashboard
+- **Inventory Management:** Real-time stock tracking with low-inventory alerts and bulk product uploads.
+- **Order Tracking:** Comprehensive order management system with status updates (Pending, Processing, Delivered).
+- **Global Settings:** Centralized control for shipping charges, announcement bars, and promotional coupons.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🚀 Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Framework:** Next.js 14 (App Router)
+- **Styling:** Tailwind CSS (Utility-first CSS)
+- **State Management:** Zustand (Persistent Store)
+- **Database:** MongoDB with Prisma ORM
+- **Icons & UI:** Lucide React, Framer Motion
+- **Notifications:** React Hot Toast
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 📦 Installation & Setup
+
+1. **Clone the Repository:**
+   ```bash
+   git clone [https://github.com/your-username/mother-abaya.git](https://github.com/your-username/mother-abaya.git)
+   cd mother-abaya
