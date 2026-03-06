@@ -39,9 +39,9 @@ export default function CheckoutPage() {
           clearCart();
 
           if (result.url) {
-            window.location.href = result.url; // পেমেন্ট গেটওয়েতে রিডাইরেক্ট
+            window.location.href = result.url; 
           } else {
-            router.push(`/order-success/${result.orderId}`); // সাকসেস পেজে নেভিগেট
+            router.push(`/order-success/${result.orderId}`); 
           }
         } else {
           toast.error(result.error || "Failed to place order");
