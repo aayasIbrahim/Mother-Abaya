@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useCartStore } from "@/store/useCartStore";
 import { X, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { toast } from "react-hot-toast";
 import Link from "next/link";
 
 export default function CartDrawer() {
@@ -12,7 +13,8 @@ export default function CartDrawer() {
     updateQuantity,
     getTotalItems,
     getTotalPrice,
-    clearCart, // নিশ্চিত করুন আপনার স্টোরে এই ফাংশনটি আছে
+    removeFromCart,
+    clearCart,
   } = useCartStore();
   const [mounted, setMounted] = useState(false);
 
@@ -108,7 +110,42 @@ export default function CartDrawer() {
                         <h3 className="text-[13px] font-black text-gray-900 uppercase leading-tight tracking-tight">
                           {item.name}
                         </h3>
+
+                        {/* ✅ সিঙ্গেল আইটেম রিমুভ বাটন */}
+                        <button
+                          onClick={() => {
+                            removeFromCart(item._id, item.size);
+                            toast.error(`${item.name} removed`, {
+                              icon: "🗑️",
+                              style: {
+                                background: "#ffffff",
+                                color: "#4A4A4A",
+                                borderRadius: "20px",
+                                padding: "16px 24px",
+                                fontSize: "15px",
+                                fontWeight: "500",
+                                border: "1px solid #B3589D20",
+                                borderLeft: "6px solid #B3589D",
+                                boxShadow:
+                                  "0 10px 25px -5px rgba(179, 88, 157, 0.15)",
+                              },
+                            });
+                          }}
+                          className="relative flex items-center justify-center w-8 h-8 rounded-full text-red-500 hover:text-red-600 hover:bg-red-50 transition-all duration-300 group active:scale-75"
+                          aria-label="Remove item"
+                        >
+                          {/* Tooltip - Desktop এ দেখা যাবে */}
+                          <span className="absolute -top-8 scale-0 group-hover:scale-100 transition-all bg-red-500 text-white text-[9px] px-2 py-1 rounded font-black uppercase tracking-tighter">
+                            Remove
+                          </span>
+
+                          <Trash2
+                            size={15}
+                            className="transition-transform group-hover:rotate-12"
+                          />
+                        </button>
                       </div>
+
                       <p className="text-[10px] font-bold text-[#B3589D] uppercase tracking-widest">
                         Size: {item.size}
                       </p>

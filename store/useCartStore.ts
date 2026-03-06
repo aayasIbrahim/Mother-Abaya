@@ -27,7 +27,7 @@ interface CartState {
 export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
-      // এখানে 'get' যোগ করা হয়েছে লজিক রিড করার জন্য
+    
       cart: [],
       isOpen: false,
       openCart: () => set({ isOpen: true }),

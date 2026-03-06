@@ -58,7 +58,7 @@ export default function PublicLayout({
           reverseOrder={false}
           gutter={8}
           toastOptions={{
-            duration: 4000,
+            duration: 1500,
             style: {
               // কার্ডের মূল ডিজাইন
               background: "#ffffff",
@@ -76,7 +76,7 @@ export default function PublicLayout({
                 secondary: "#fff",
               },
               style: {
-                borderLeft: "6px solid #B3589D", // বাম পাশে ব্র্যান্ড কালার হাইলাইট
+                borderLeft: "6px solid #B3589D", 
               },
             },
             error: {

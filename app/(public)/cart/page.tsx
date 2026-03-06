@@ -1,9 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useCartStore } from "@/store/useCartStore";
-import { Minus, Plus, X } from "lucide-react";
+import { Minus, Plus, Trash2 } from "lucide-react";
 import PageHero from "@/components/public/PageHero";
 import Link from "next/link";
+import { toast } from "react-hot-toast";
 
 export default function CartPage() {
   const { cart, updateQuantity, removeFromCart, getTotalPrice } =
@@ -50,10 +51,28 @@ export default function CartPage() {
                 {/* Product Info */}
                 <div className="col-span-6 flex items-center gap-4">
                   <button
-                    onClick={() => removeFromCart(item._id, item.size)}
-                    className="text-gray-300 hover:text-red-500"
+                    onClick={() => {
+                      removeFromCart(item._id, item.size);
+                      // প্রফেশনাল পিঙ্ক টোস্ট ফিডব্যাক
+                      toast.error(`${item.name} removed from cart`, {
+                        icon: "🗑️",
+                        style: {
+                          borderRadius: "10px",
+                          background: "#B3589D",
+                          color: "#fff",
+                          fontSize: "12px",
+                          fontWeight: "bold",
+                          textTransform: "uppercase",
+                        },
+                      });
+                    }}
+                    className="w-8 h-8 flex items-center justify-center rounded-full text-gray-300 hover:text-red-500 hover:bg-red-50 transition-all group active:scale-75"
+                    title="Remove Item"
                   >
-                    <X size={16} />
+                    <Trash2 size={18} 
+                    
+                      className="group-hover:rotate-90 transition-transform duration-300  text-pink-500 hover:text-red-500"
+                    />
                   </button>
                   <img
                     src={item.image}
@@ -74,7 +93,7 @@ export default function CartPage() {
 
                 {/* Quantity */}
                 <div className="col-span-2 flex justify-center">
-                  <div className="flex items-center border border-gray-200 rounded-lg p-1 bg-white shadow-sm">
+                  <div className="flex items-center border border-pink-200 rounded-lg p-1 bg-white shadow-sm">
                     <button
                       onClick={() =>
                         updateQuantity(
@@ -83,7 +102,7 @@ export default function CartPage() {
                           Math.max(1, item.quantity - 1),
                         )
                       }
-                      className="p-2 hover:text-[#B3589D]"
+                      className="p-2 text-black hover:text-[#B3589D]"
                     >
                       <Minus size={14} />
                     </button>
@@ -94,7 +113,7 @@ export default function CartPage() {
                       onClick={() =>
                         updateQuantity(item._id, item.size, item.quantity + 1)
                       }
-                      className="p-2 hover:text-[#B3589D]"
+                      className="p-2 text-black hover:text-[#B3589D]"
                     >
                       <Plus size={14} />
                     </button>

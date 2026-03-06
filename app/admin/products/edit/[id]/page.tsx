@@ -1,6 +1,6 @@
-import connectDB from "../../../../../../libs/db";
-import Product from "../../../../../../models/Product";
-import EditProductForm from "../../../../../../components/admin/EditProductForm";
+import connectDB from "@/libs/db";
+import Product from "@/models/Product";
+import EditProductForm from "@/components/admin/EditProductForm";
 import { notFound } from "next/navigation";
 
 export default async function EditProductPage({
