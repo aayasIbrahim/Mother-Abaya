@@ -1,16 +1,8 @@
-
-import  connectDB  from "@/libs/db";
-import StoreSettings from "@/models/Settings";
-import CheckoutClient from "@/components/public/CheckoutForm";
+import { getShippingCharges } from "@/libs/actions/settings";
+import CheckoutClient from "@/components/public/CheckoutClient";
 
 export default async function CheckoutPage() {
-  await connectDB();
-  const settings = await StoreSettings.findOne({}).lean();
-
-  const deliveryCharges = {
-    insideDhaka: settings?.insideDhaka || 80,
-    outsideDhaka: settings?.outsideDhaka || 150,
-  };
+  const deliveryCharges = await getShippingCharges();
 
   return <CheckoutClient deliveryCharges={deliveryCharges} />;
 }

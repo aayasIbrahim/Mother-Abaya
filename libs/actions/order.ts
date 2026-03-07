@@ -104,9 +104,10 @@ export async function createOrderAction(formData: any) {
       status: "pending",
       notes: validatedData.notes,
     });
-    revalidatePath("/admin/orders");
-    revalidatePath("/admin");
     const orderIdStr = newOrder._id.toString();
+    revalidatePath("/admin/orders");
+    revalidatePath(`/order-success/${orderIdStr}`);
+    revalidatePath("/admin");
 
     // ৭. রিডাইরেক্ট লজিক
     if (validatedData.paymentMethod !== "cod") {

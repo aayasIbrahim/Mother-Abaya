@@ -3,6 +3,7 @@ import { useTransition } from "react";
 import { updateOrderStatus } from "@/libs/actions/order";
 import { toast } from "react-hot-toast";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function StatusSelector({
   orderId,
@@ -11,6 +12,7 @@ export default function StatusSelector({
   orderId: string;
   currentStatus: string;
 }) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -20,6 +22,7 @@ export default function StatusSelector({
       const result = await updateOrderStatus(orderId, newStatus);
       if (result.success) {
         toast.success("Status updated!");
+        router.refresh();
       } else {
         toast.error(result.error || "Failed to update");
       }

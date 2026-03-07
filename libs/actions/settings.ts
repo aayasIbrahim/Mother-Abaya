@@ -27,21 +27,36 @@ export async function updateStoreSettings(formData: FormData) {
     await StoreSettings.findOneAndUpdate(
       {},
       { $set: data },
-      { 
-        upsert: true, 
-        // 'new: true' এর পরিবর্তে 'returnDocument: 'after'' ব্যবহার করা হয়েছে 
+      {
+        upsert: true,
+        // 'new: true' এর পরিবর্তে 'returnDocument: 'after'' ব্যবহার করা হয়েছে
         // যাতে ওই ডিপ্রিকেশন ওয়ার্নিং না আসে।
-        returnDocument: 'after' 
-      }
+        returnDocument: "after",
+      },
     );
 
     // ক্যাশ ক্লিয়ার করা যাতে নতুন ডাটা সাথে সাথে দেখা যায়
-    revalidatePath("/admin/settings"); 
+    revalidatePath("/admin/settings");
     revalidatePath("/");
+    revalidatePath("/checkout"); 
+    revalidatePath("/cart");
 
     return { success: true, message: "Settings Updated Successfully! 🚀" };
   } catch (error) {
     console.error("Update Error:", error);
     return { success: false, message: "Failed to update settings. ❌" };
+  }
+}
+
+export async function getShippingCharges() {
+  try {
+    await connectDB();
+    const settings = await StoreSettings.findOne({}).lean();
+    return {
+      insideDhaka: settings?.insideDhaka || 80,
+      outsideDhaka: settings?.outsideDhaka || 150,
+    };
+  } catch (error) {
+    return { insideDhaka: 80, outsideDhaka: 150 }; 
   }
 }
