@@ -1,6 +1,7 @@
 import connectDB from "@/libs/db";
 import Order from "@/models/Order";
 import mongoose from "mongoose";
+import Product from "@/models/Product";
 import { notFound } from "next/navigation";
 import { Package, User, MapPin, CreditCard, Calendar, Phone, ChevronLeft, Printer } from "lucide-react";
 import StatusSelector from "@/components/admin/StatusSelector";
