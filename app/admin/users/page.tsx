@@ -3,8 +3,7 @@ import User from "@/models/User";
 import SearchUsers from "@/components/admin/SearchUsers";
 import UserTable from "@/components/admin/UserTable";
 
-// export const dynamic = "force-dynamic";
-// export const revalidate = 0;
+
 
 export default async function AdminUsersPage({
   searchParams,

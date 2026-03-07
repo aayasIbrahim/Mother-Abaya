@@ -37,7 +37,7 @@ export default function AdminLayout({
   const pathname = usePathname();
 
   return (
-    <div className="flex min-h-screen bg-[#FDF7FB]">
+    <div className="flex h-screen overflow-hidden bg-[#FDF7FB]">
       {/* --- Mobile Sidebar Overlay --- */}
       {isSidebarOpen && (
         <div
@@ -49,9 +49,10 @@ export default function AdminLayout({
       {/* --- Sidebar (Mobile & Desktop) --- */}
       <aside
         className={`
-        fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-100 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0
-        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-      `}
+          fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-100 transform transition-transform duration-300 ease-in-out 
+          md:relative md:translate-x-0 flex flex-col h-full
+          ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+        `}
       >
         <div className="flex flex-col h-full">
           {/* Logo Section */}

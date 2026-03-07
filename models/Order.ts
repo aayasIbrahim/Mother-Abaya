@@ -27,7 +27,9 @@ const OrderSchema = new Schema(
     ],
 
     // ৩. পেমেন্ট ও ক্যালকুলেশন
-    totalAmount: { type: Number, required: true },
+    subtotal: { type: Number, required: true, default: 0 }, // পণ্যের মোট দাম
+    shippingCost: { type: Number, required: true, default: 0 }, // ডেলিভারি চার্জ
+    totalAmount: { type: Number, required: true }, // subtotal + shippingCost
     paymentMethod: {
       type: String,
       enum: ["cod", "bkash", "card"],
@@ -38,7 +40,7 @@ const OrderSchema = new Schema(
       enum: ["pending", "paid", "failed", "refunded"],
       default: "pending",
     },
-    
+
     // ৪. অর্ডার স্ট্যাটাস
     status: {
       type: String,
@@ -52,7 +54,7 @@ const OrderSchema = new Schema(
   },
   {
     timestamps: true, // এটি অটোমেটিক createdAt এবং updatedAt তৈরি করবে
-  }
+  },
 );
 
 // নেক্সট জেএস-এ মডেল যেন বারবার রেজিস্টার না হয় সেটার হ্যান্ডলিং

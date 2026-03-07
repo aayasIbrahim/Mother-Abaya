@@ -4,6 +4,7 @@ import connectDB from "@/libs/db";
 import Product from "@/models/Product";
 import { z } from "zod";
 import Order from "@/models/Order";
+import StoreSettings from "@/models/Settings";
 import { revalidatePath } from "next/cache";
 
 const OrderSchema = z.object({
@@ -34,7 +35,9 @@ export async function createOrderAction(formData: any) {
   try {
     // ১. ডাটাবেস কানেকশন
     await connectDB();
-
+    const settings = await StoreSettings.findOne({}).lean();
+    const insideDhaka = settings?.insideDhaka || 80;
+    const outsideDhaka = settings?.outsideDhaka || 150;
     // ২. ইনপুট ভ্যালিডেশন
     const validatedData = OrderSchema.parse(formData);
 
@@ -46,7 +49,7 @@ export async function createOrderAction(formData: any) {
       throw new Error("Some products in your cart are no longer available.");
     }
 
-    let totalAmount = 0;
+    let subtotal = 0;
     const orderItems = [];
 
     // ৪. স্টক চেক এবং প্রাইস ক্যালকুলেশন
@@ -65,8 +68,7 @@ export async function createOrderAction(formData: any) {
       // ✅ লজিক: ডিসকাউন্ট প্রাইস থাকলে সেটা নাও, না থাকলে রেগুলার প্রাইস
       const currentPrice =
         product.discountPrice > 0 ? product.discountPrice : product.price;
-
-      totalAmount += currentPrice * item.quantity;
+      subtotal += currentPrice * item.quantity;
 
       orderItems.push({
         product: item.id,
@@ -81,7 +83,10 @@ export async function createOrderAction(formData: any) {
         $inc: { stock: -item.quantity },
       });
     }
-
+    //ডেলিভারি চার্জ ক্যালকুলেশন (সার্ভার সাইড ভেরিফিকেশন)
+    const shippingCost =
+      validatedData.city === "dhaka" ? insideDhaka : outsideDhaka;
+    const finalTotal = subtotal + shippingCost;
     // ৬. অর্ডার সেভ করা
     const newOrder = await Order.create({
       customer: {
@@ -92,7 +97,9 @@ export async function createOrderAction(formData: any) {
         city: validatedData.city,
       },
       items: orderItems,
-      totalAmount,
+      subtotal,
+      shippingCost,
+      totalAmount: finalTotal,
       paymentMethod: validatedData.paymentMethod,
       status: "pending",
       notes: validatedData.notes,
@@ -105,7 +112,7 @@ export async function createOrderAction(formData: any) {
     if (validatedData.paymentMethod !== "cod") {
       return {
         success: true,
-        url: `/checkout/payment?orderId=${orderIdStr}&amount=${totalAmount}`,
+        url: `/checkout/payment?orderId=${orderIdStr}&amount=${finalTotal}`,
         orderId: orderIdStr,
       };
     }
