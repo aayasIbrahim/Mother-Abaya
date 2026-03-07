@@ -9,6 +9,7 @@ import { toast } from "react-hot-toast";
 export default function CartPage() {
   const { cart, updateQuantity, removeFromCart, getTotalPrice } =
     useCartStore();
+
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -18,10 +19,11 @@ export default function CartPage() {
   if (!mounted) return null;
 
   const subtotal = getTotalPrice();
+  const isCartEmpty = cart.length === 0;
 
-  const courierCharge = subtotal > 0 ? 113 : 0;
-
-  const total = subtotal + courierCharge;
+  // কার্ট খালি থাকলে ০, নাহলে সর্বনিম্ন চার্জ (ঢাকার ভেতর) ৮০ টাকা ধরুন
+  const estimatedShipping = isCartEmpty ? 0 : 80;
+  const total = subtotal + estimatedShipping;
 
   return (
     <div className="min-h-screen bg-[#FDF7FB]">
@@ -201,15 +203,41 @@ export default function CartPage() {
                 </div>
               </div>
 
-              <div className="flex justify-between pb-4 border-b">
-                <span className="font-medium">COD 1% Courier</span>
-                <span className="font-bold">
-                  {courierCharge.toLocaleString()}.00৳
-                </span>
+              <div className="flex justify-between items-start pb-4 border-b">
+                <span className="font-medium text-gray-700">Shipping</span>
+                <div className="text-right">
+                  <div className="flex flex-col items-end gap-1">
+                    <span
+                      className={`font-bold ${isCartEmpty ? "text-gray-400" : "text-gray-900"}`}
+                    >
+                      {isCartEmpty ? "0.00৳" : `${estimatedShipping}.00৳`}
+                    </span>
+
+                    {!isCartEmpty && (
+                      <div className="flex flex-col items-end">
+                        <span className="bg-pink-50 text-[#B3589D] text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter border border-pink-100">
+                          Inside Dhaka Rate
+                        </span>
+                        <p className="text-[10px] text-gray-400 mt-1 max-w-[150px] leading-tight italic">
+                          * Shipping for{" "}
+                          <span className="text-pink-400 font-semibold">
+                            Outside Dhaka
+                          </span>{" "}
+                          will be updated at checkout.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
               <div className="flex justify-between pt-4 text-lg">
-                <span className="font-bold">Total</span>
+                <div className="flex flex-col">
+                  <span className="font-bold">Total</span>
+                  <span className="text-[10px] text-gray-400 uppercase tracking-widest -mt-1 font-bold">
+                    Estimated
+                  </span>
+                </div>
                 <span className="font-black text-[#B3589D]">
                   {total.toLocaleString()}.00৳
                 </span>

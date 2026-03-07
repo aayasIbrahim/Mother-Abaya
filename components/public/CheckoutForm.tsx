@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React from "react";
 import { useState, useTransition } from "react";
@@ -19,7 +19,10 @@ export default function CheckoutClient({
   const [deliveryArea, setDeliveryArea] = useState("dhaka");
   const [shippingCost, setShippingCost] = useState(deliveryCharges.insideDhaka);
   const router = useRouter();
+  const cartTotal = getTotalPrice();
+  const isCartEmpty = cart.length === 0;
 
+  const finalTotal = isCartEmpty ? 0 : cartTotal + shippingCost;
   const handleAreaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const area = e.target.value;
     setDeliveryArea(area);
@@ -115,7 +118,7 @@ export default function CheckoutClient({
                   <option value="outside">Outside Dhaka</option>
                 </select>
               </div>
-             
+
               <InputField
                 label="Phone Number"
                 name="phone"
@@ -208,7 +211,9 @@ export default function CheckoutClient({
                   Total
                 </span>
                 <span className="text-[#B3589D]">
-               <span className="text-[#B3589D]">৳{(getTotalPrice() + shippingCost).toLocaleString()}</span>
+                  <span className="text-[#B3589D]">
+                    ৳{finalTotal.toLocaleString()}
+                  </span>
                 </span>
               </div>
             </div>
@@ -246,7 +251,7 @@ export default function CheckoutClient({
               <button
                 type="submit"
                 form="checkout-form"
-                disabled={isPending}
+                disabled={isPending || isCartEmpty}
                 className="w-full py-5 bg-pink-800 text-white rounded-2xl font-black text-sm uppercase tracking-[0.2em] hover:bg-pink-900 transition-all active:scale-[0.98] disabled:bg-gray-400"
               >
                 {isPending
@@ -271,7 +276,7 @@ const InputField = ({ label, required, ...props }: any) => (
     </label>
     <input
       {...props}
-      className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-[#B3589D] text-sm transition-all"
+      className="w-full p-3 bg-gray-50 text-black border border-gray-100 rounded-xl outline-none focus:border-[#B3589D] text-sm transition-all"
     />
   </div>
 );
