@@ -17,7 +17,6 @@ export default async function OrderDetailsPage({
   
   await connectDB();
 
-  // প্রোডাক্ট ডিটেইলস সহ অর্ডারটি আনা
   const order = await Order.findById(id).populate("items.product").lean();
 
   if (!order) notFound();
