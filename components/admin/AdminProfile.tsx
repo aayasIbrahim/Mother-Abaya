@@ -62,7 +62,7 @@ export default function AdminProfile({ session }: AdminProfileProps) {
 
         <div className="space-y-1 mt-1">
           <Link
-            href="/admin/profile"
+            href="/admin/edit-profile"
             className="flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-gray-600 hover:bg-pink-50 hover:text-[#B3589D] rounded-xl transition-all"
           >
             <Users
