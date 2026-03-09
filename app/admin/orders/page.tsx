@@ -24,17 +24,17 @@ export default async function AdminOrdersPage({
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm mb-6">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 italic tracking-tighter uppercase">
-            Order Log
+          <h1 className="text-2xl font-black text-gray-800 tracking-tight">
+            Order Mangement
           </h1>
-          <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">
-            Mother Abaya Management System
+          <p className="text-sm text-gray-500 font-medium">
+            Manage your Mother Abaya Order
           </p>
         </div>
-        <div className="bg-[#B3589D] text-white px-8 py-4 rounded-2xl font-black  shadow-lg shadow-pink-100">
-          TOTAL: {totalOrders}
+        <div className="flex items-center gap-2 bg-[#B3589D] text-white px-6 py-3 rounded-2xl font-bold hover:bg-[#a04a8b] transition-all shadow-lg">
+          Total Orders: {orders.length}
         </div>
       </div>
 
