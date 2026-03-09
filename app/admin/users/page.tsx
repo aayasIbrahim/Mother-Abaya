@@ -2,19 +2,22 @@ import connectDB from "@/libs/db";
 import User from "@/models/User";
 import SearchUsers from "@/components/admin/SearchUsers";
 import UserTable from "@/components/admin/UserTable";
-
-
+import Pagination from "@/components/admin/Pagination";
 
 export default async function AdminUsersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; page?: string }>; // page যোগ করা হয়েছে
 }) {
   await connectDB();
 
   const resolvedParams = await searchParams;
   const query = resolvedParams.q || "";
+  const currentPage = Number(resolvedParams.page) || 1; 
+  const limit = 5; 
+  const skip = (currentPage - 1) * limit;
 
+  // সার্চ ফিল্টার লজিক
   const filter = query
     ? {
         $or: [
@@ -24,11 +27,21 @@ export default async function AdminUsersPage({
       }
     : {};
 
-  const usersData = await User.find(filter).sort({ createdAt: -1 }).lean();
-  
-  // JSON serialization নিশ্চিত করতে
+  // ১. ডাটা এবং টোটাল কাউন্ট একসাথে আনা (প্যাজিনেশন লজিকসহ)
+  const [usersData, totalUsers] = await Promise.all([
+    User.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    User.countDocuments(filter), // ফিল্টার অনুযায়ী মোট কতজন ইউজার আছে
+  ]);
+
+  // ২. সিরিয়ালাইজেশন
   const users = JSON.parse(JSON.stringify(usersData));
 
+  // ৩. টোটাল পেজ ক্যালকুলেশন
+  const totalPages = Math.ceil(totalUsers / limit);
   return (
     <div className="space-y-8 max-w-7xl mx-auto p-4 md:p-0">
       {/* Header & Search */}
@@ -55,6 +68,12 @@ export default async function AdminUsersPage({
           </p>
         </div>
       )}
+
+      <Pagination currentPage={currentPage } totalPages={totalPages}/>
+
+      <div className="text-xs text-gray-400 font-bold uppercase tracking-widest px-4">
+        Showing {users.length} of {totalUsers} users
+      </div>
     </div>
   );
 }
