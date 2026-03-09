@@ -14,6 +14,7 @@ export default async function AdminOrdersPage({
   const limit = 5;
   const skip = (currentPage - 1) * limit;
 
+  //  ডাটাবেস থেকে ডাটা এবং টোটাল কাউন্ট একসাথে আনা (Performance optimized)
   const [orders, totalOrders] = await Promise.all([
     Order.find().sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
     Order.countDocuments(),
