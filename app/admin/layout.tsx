@@ -1,5 +1,5 @@
 "use client";
-
+import AdminProfile from "@/components/admin/AdminProfile";
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -134,22 +134,8 @@ export default function AdminLayout({
                 "Dashboard"}
             </h2>
           </div>
-
-          <div className="flex items-center gap-3 md:gap-6">
-            <div className="flex items-center gap-3">
-              <div className="text-right  sm:block">
-                <p className="text-sm font-bold text-gray-800">
-                  {session?.user?.name || "Admin Panel"}
-                </p>
-                <p className="text-[10px] text-[#B3589D] font-black uppercase tracking-widest">
-                  Admin
-                </p>
-              </div>
-              <div className="w-11 h-11 bg-gradient-to-tr from-[#B3589D] to-pink-400 rounded-2xl flex items-center justify-center text-white shadow-md shadow-pink-100">
-                <Users size={20} />
-              </div>
-            </div>
-          </div>
+      
+          <AdminProfile session={session} />
         </header>
 
         {/* Dynamic Content */}
