@@ -27,7 +27,7 @@ export default function SettingsForm({ settings }: { settings: any }) {
       action={handleSubmit}
       // Key যোগ করা হয়েছে যাতে সেভ হওয়ার পর ইনপুটগুলো ফ্রেশ ডাটা দিয়ে আপডেট হয়
       key={settings?.updatedAt || settings?._id || "initial"}
-      className="p-6 md:p-10 max-w-6xl mx-auto space-y-12 bg-[#FDF7FB] min-h-screen"
+      className=" md:p-10 max-w-7xl mx-auto space-y-12 bg-[#FDF7FB] min-h-screen"
     >
       {/* --- TOP HEADER SECTION --- */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 sticky top-0 z-10 bg-[#FDF7FB]/80 backdrop-blur-md py-4">
