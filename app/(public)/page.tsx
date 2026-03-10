@@ -1,4 +1,4 @@
-// app/shop/page.tsx
+
 import React from "react";
 import connectDB from "@/libs/db";
 import Product from "@/models/Product";
@@ -16,7 +16,7 @@ export default async function ShopPage({
   if (sort === "price_asc") sortOption = { price: 1 };
   if (sort === "price_desc") sortOption = { price: -1 };
 
-  const productsRaw = await Product.find({}).sort(sortOption).lean();
+  const productsRaw = await Product.find({}).sort(sortOption).lean(); 
   const products = JSON.parse(JSON.stringify(productsRaw));
 
   return (

@@ -23,7 +23,6 @@ export default async function ProductsPage({
     Product.find().sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
     Product.countDocuments(),
   ]);
-  
 
   const products = JSON.parse(JSON.stringify(productsRaw));
 
@@ -31,20 +30,29 @@ export default async function ProductsPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
-        <div>
-          <h1 className="text-2xl font-black text-gray-800 tracking-tight">
-            Product Inventory
-          </h1>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white p-6 md:p-8 rounded-[2rem] border border-gray-100 shadow-sm transition-all">
+        {/* Left Side: Title & Info */}
+        <div className="space-y-3 w-full md:w-auto">
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-2xl md:text-3xl font-black text-gray-800 tracking-tight">
+              Product Inventory
+            </h1>
+            {/* Total Products Badge - Now inline and looking professional */}
+            <span className="bg-pink-50 text-[#B3589D] px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border border-pink-100">
+              {totalProducts} Items
+            </span>
+          </div>
           <p className="text-sm text-gray-500 font-medium">
-            Manage your Mother Abaya collection
+            Manage and monitor your Mother Abaya collection
           </p>
         </div>
+
+        {/* Right Side: Action Button */}
         <Link
           href="/admin/products/add"
-          className="flex items-center gap-2 bg-[#B3589D] text-white px-6 py-3 rounded-2xl font-bold hover:bg-[#a04a8b] transition-all shadow-lg"
+          className="w-full md:w-auto flex items-center justify-center gap-2 bg-[#B3589D] text-white px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-[#a04a8b] active:scale-95 transition-all shadow-lg shadow-pink-100"
         >
-          <Plus size={20} /> Add New Product
+          <Plus size={18} strokeWidth={3} /> Add New Product
         </Link>
       </div>
       <ProductTable products={products} />
