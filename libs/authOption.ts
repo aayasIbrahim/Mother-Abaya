@@ -1,4 +1,4 @@
-import { Phone } from "lucide-react";
+
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import connectDB from "./db";
@@ -92,11 +92,14 @@ export const authOptions: NextAuthOptions = {
         token.role = user.role ?? "user";
         token.phone = user.phone ?? null;
       }
-
-      // ✅ এখানে পরিবর্তন: যখন ফ্রন্টএন্ড থেকে session.update() কল হবে
-      if (trigger === "update" && session?.name) {
-        token.name = session.name;
-        token.phone = session.phone;
+      // * যখনই আমরা ফ্রন্টএন্ডে update() ফাংশন কল করি, এই 'trigger' ব্লকটি সজাগ হয়ে যায়।
+      //  * এটি ডাটাবেসে সেভ হওয়া নতুন নাম (name) এবং ফোন (phone) নম্বরকে
+      //  * সাথে সাথে ব্রাউজারের সেশন টোকেনের ভেতর পুশ করে দেয়।
+      //  * ফলাফল: পেজ রিফ্রেশ ছাড়াই ড্যাশবোর্ডের সব জায়গায় নতুন ডেটা দেখা যায়।
+      //  */
+      if (trigger === "update") {
+        if (session?.name) token.name = session.name;
+        if (session?.phone) token.phone = session.phone;
       }
 
       return token;

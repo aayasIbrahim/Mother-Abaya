@@ -7,7 +7,6 @@ import { updateProfileAction } from "@/libs/actions/user";
 
 export default function EditProfilePage() {
   const { data: session, update } = useSession();
-  console.log("session", session);
   const [showOld, setShowOld] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
