@@ -44,7 +44,7 @@ export default function EditProfilePage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 pb-10">
+    <div className="max-w-7xl mx-auto space-y-8 pb-10">
       <div>
         <h1 className="text-3xl font-black text-gray-800 uppercase italic tracking-tighter">
           Edit Profile

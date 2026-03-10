@@ -5,7 +5,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/libs/authOption";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
-import { useReducedMotion } from "framer-motion";
 
 export async function updateUserRole(userId: string, newRole: string) {
   try {
@@ -84,7 +83,7 @@ export async function updateProfileAction(formData: FormData) {
 
     await user.save();
 
-    revalidatePath("/admin/profile");
+    revalidatePath("/admin/edit-profile");
     revalidatePath("/admin");
 
     return {

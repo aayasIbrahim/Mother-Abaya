@@ -26,7 +26,7 @@ export default function AdminProfile({ session }: AdminProfileProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
   return (
-    <div className="relative group ref={dropdownRef}">
+    <div className="relative group" ref={dropdownRef}>
       {/* --- Profile Trigger --- */}
       <div
         className="flex items-center gap-3 md:gap-4 cursor-pointer p-1 rounded-2xl transition-all duration-300 "
@@ -45,12 +45,13 @@ export default function AdminProfile({ session }: AdminProfileProps) {
             <Users size={20} />
           </div>
         </div>
-
-        {/* Avatar with Initials */}
       </div>
 
       {/* --- Dropdown Menu --- */}
-      <div className="absolute right-0 mt-2 w-56 bg-white rounded-[1.8rem] shadow-2xl border border-pink-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden transform origin-top-right group-hover:translate-y-0 translate-y-2 p-2">
+      <div
+        className={`absolute right-0 mt-2 w-56 bg-white rounded-[1.8rem] shadow-2xl border border-pink-50 transition-all duration-300 z-50 overflow-hidden transform origin-top-right p-2 
+        ${isOpen ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2"}`}
+      >
         <div className="px-4 py-4 border-b border-gray-50 mb-1 bg-pink-50/30 rounded-t-[1.3rem]">
           <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">
             Authenticated as
