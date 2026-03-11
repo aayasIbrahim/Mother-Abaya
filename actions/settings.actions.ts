@@ -29,17 +29,20 @@ export async function updateStoreSettings(formData: FormData) {
       { $set: data },
       {
         upsert: true,
-        // 'new: true' এর পরিবর্তে 'returnDocument: 'after'' ব্যবহার করা হয়েছে
-        // যাতে ওই ডিপ্রিকেশন ওয়ার্নিং না আসে।
-        returnDocument: "after",
+        new: true, // Mongoose এর লেটেস্ট ভার্সনে এটি নিরাপদ
+        runValidators: true, // স্কিমা ভ্যালিডেশন এনফোর্স করবে
       },
     );
 
     // ক্যাশ ক্লিয়ার করা যাতে নতুন ডাটা সাথে সাথে দেখা যায়
-    revalidatePath("/admin/settings");
-    revalidatePath("/");
-    revalidatePath("/checkout"); 
-    revalidatePath("/cart");
+    const pathsToRevalidate = [
+      "/",
+      "/admin/settings",
+      "/checkout",
+      "/cart",
+      "/contact-us",
+    ];
+    pathsToRevalidate.forEach((path) => revalidatePath(path));
 
     return { success: true, message: "Settings Updated Successfully! 🚀" };
   } catch (error) {
@@ -48,6 +51,16 @@ export async function updateStoreSettings(formData: FormData) {
   }
 }
 
+export async function getStoreSettings() {
+  try {
+    await connectDB();
+    const settings = await StoreSettings.findOne({}).lean();
+    return settings;
+  } catch (error) {
+    console.error("Error fetching settings:", error);
+    return null;
+  }
+}
 export async function getShippingCharges() {
   try {
     await connectDB();
@@ -57,6 +70,6 @@ export async function getShippingCharges() {
       outsideDhaka: settings?.outsideDhaka || 150,
     };
   } catch (error) {
-    return { insideDhaka: 80, outsideDhaka: 150 }; 
+    return { insideDhaka: 80, outsideDhaka: 150 };
   }
 }
