@@ -1,27 +1,58 @@
 import React from "react";
 import Link from "next/link";
-import { Facebook, Instagram } from "lucide-react";
+import { getStoreSettings } from "@/actions/settings.actions";
+import { Facebook, Instagram, MessageCircleMore } from "lucide-react";
 
-const Footer = () => {
+export default async function Footer() {
+  const settings = await getStoreSettings();
   return (
     <footer className="w-full bg-white pt-8 pb-4">
       <div className="container mx-auto px-4">
         {/* Social Media Icons */}
         <div className="flex justify-center gap-6 mb-8">
-          <Link
-            href="#"
-            className="text-blue-600 hover:scale-110 transition-transform"
-            aria-label="Facebook"
-          >
-            <Facebook size={32} fill="currentColor" />
-          </Link>
-          <Link
-            href="#"
-            className="text-pink-600 hover:scale-110 transition-transform"
-            aria-label="Instagram"
-          >
-            <Instagram size={32} />
-          </Link>
+          {settings?.facebookUrl && (
+            <Link
+              href={
+                settings.facebookUrl.startsWith("http")
+                  ? settings.facebookUrl
+                  : `https://${settings.facebookUrl}`
+              }
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:scale-110 transition-all duration-300 drop-shadow-sm"
+              aria-label="Visit Mother Abaya on Facebook"
+            >
+              <Facebook size={28} fill="currentColor" strokeWidth={0} />
+            </Link>
+          )}
+          {settings?.instagramUrl && (
+            <Link
+              href={
+                settings.instagramUrl.startsWith("http")
+                  ? settings.instagramUrl
+                  : `https://${settings.instagramUrl}`
+              }
+              target="_blank"
+              className="text-pink-600 hover:scale-110 transition-transform"
+              aria-label="Instagram"
+            >
+              <Instagram size={32} />
+            </Link>
+          )}
+          {settings?.whatsappNumber && (
+            <Link
+              href={`https://wa.me/${settings.whatsappNumber}`}
+              target="_blank"
+              className="text-green-500 hover:scale-125 transition-all duration-300 drop-shadow-sm"
+              aria-label="WhatsApp"
+            >
+              <MessageCircleMore
+                size={28}
+                fill="currentColor"
+                strokeWidth={0}
+              />
+            </Link>
+          )}
         </div>
 
         {/* Action Buttons (Mobile First & Modern) */}
@@ -66,6 +97,4 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}
