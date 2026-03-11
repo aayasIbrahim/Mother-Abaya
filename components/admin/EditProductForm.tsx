@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { updateProduct } from "@/libs/actions/product";
+import { updateProduct } from "@/actions/product.actions";
 import { toast } from "react-hot-toast";
 
 // Types Define করা ভালো প্র্যাকটিস

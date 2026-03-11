@@ -2,7 +2,7 @@
 
 import { Trash2, Loader2 } from "lucide-react";
 import { useTransition } from "react";
-import { deleteOrder } from "@/libs/actions/order";
+import { deleteOrder } from "@/actions/order.actions";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 
@@ -11,18 +11,19 @@ export default function DeleteOrderBtn({ orderId }: { orderId: string }) {
   const router = useRouter();
 
   const handleDelete = () => {
-    
-    const isConfirmed = confirm("Are you sure you want to delete this order? This action cannot be undone.");
-    
+    const isConfirmed = confirm(
+      "Are you sure you want to delete this order? This action cannot be undone.",
+    );
+
     if (!isConfirmed) return;
 
     startTransition(async () => {
       try {
         const res = await deleteOrder(orderId);
-        
+
         if (res.success) {
           toast.success("Order deleted successfully");
-          router.refresh(); 
+          router.refresh();
         } else {
           toast.error(res.error || "Failed to delete order");
         }
@@ -43,7 +44,10 @@ export default function DeleteOrderBtn({ orderId }: { orderId: string }) {
       {isPending ? (
         <Loader2 size={16} className="animate-spin text-red-600" />
       ) : (
-        <Trash2 size={16} className="group-hover:scale-110 transition-transform" />
+        <Trash2
+          size={16}
+          className="group-hover:scale-110 transition-transform"
+        />
       )}
     </button>
   );

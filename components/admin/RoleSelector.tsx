@@ -1,11 +1,17 @@
 "use client";
 
 import { useTransition } from "react";
-import { updateUserRole } from "@/libs/actions/user";
+import { updateUserRole } from "@/actions/user.actions";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
-export default function RoleSelector({ userId, currentRole }: { userId: string, currentRole: string }) {
+export default function RoleSelector({
+  userId,
+  currentRole,
+}: {
+  userId: string;
+  currentRole: string;
+}) {
   const [isPending, startTransition] = useTransition();
 
   const handleRoleChange = (newRole: string) => {

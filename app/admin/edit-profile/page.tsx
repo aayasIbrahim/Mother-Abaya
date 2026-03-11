@@ -3,7 +3,7 @@ import React, { useState, useTransition } from "react";
 import { User, Save, Eye, EyeOff, ShieldCheck, Lock } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { toast } from "react-hot-toast";
-import { updateProfileAction } from "@/libs/actions/user";
+import { updateProfileAction } from "@/actions/user.actions";
 
 export default function EditProfilePage() {
   const { data: session, update } = useSession();

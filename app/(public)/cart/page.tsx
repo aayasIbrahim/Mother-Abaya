@@ -1,6 +1,6 @@
 import React from "react";
 import PageHero from "@/components/public/PageHero";
-import { getShippingCharges } from "@/libs/actions/settings";
+import { getShippingCharges } from "@/actions/settings.actions";
 import CartContent from "@/components/public/CartContent";
 
 export default async function CartPage() {
@@ -10,9 +10,7 @@ export default async function CartPage() {
     <div className="min-h-screen bg-[#FDF7FB]">
       <PageHero title="Cart" />
 
-  
-        <CartContent shippingRates={shippingRates} />
-      </div>
-  
+      <CartContent shippingRates={shippingRates} />
+    </div>
   );
 }

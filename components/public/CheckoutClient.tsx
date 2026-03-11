@@ -5,7 +5,7 @@ import { useState, useTransition } from "react";
 import { Truck, CreditCard, Smartphone, CheckCircle2 } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 import { useRouter } from "next/navigation";
-import { createOrderAction } from "@/libs/actions/order";
+import { createOrderAction } from "@/actions/order.actions";
 import { toast } from "react-hot-toast";
 
 export default function CheckoutClient({

@@ -11,7 +11,7 @@ import {
   ShieldCheck,
   Loader2,
 } from "lucide-react";
-import { updateStoreSettings } from "@/libs/actions/settings";
+import { updateStoreSettings } from "@/actions/settings.actions";
 import { toast } from "react-hot-toast";
 
 export default function SettingsForm({ settings }: { settings: any }) {

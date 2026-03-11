@@ -3,7 +3,7 @@
 import React, { useTransition } from "react";
 import Link from "next/link";
 import { Edit, Trash2, Package } from "lucide-react";
-import { deleteProduct } from "@/libs/actions/product";
+import { deleteProduct } from "@/actions/product.actions";
 import { toast } from "react-hot-toast";
 
 export default function ProductTable({ products }: { products: any[] }) {

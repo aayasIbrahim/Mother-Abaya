@@ -1,4 +1,4 @@
-import { getShippingCharges } from "@/libs/actions/settings";
+import { getShippingCharges } from "@/actions/settings.actions";
 import CheckoutClient from "@/components/public/CheckoutClient";
 
 export default async function CheckoutPage() {

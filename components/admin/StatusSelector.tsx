@@ -1,6 +1,6 @@
 "use client";
 import { useTransition } from "react";
-import { updateOrderStatus } from "@/libs/actions/order";
+import { updateOrderStatus } from "@/actions/order.actions";
 import { toast } from "react-hot-toast";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
