@@ -23,7 +23,6 @@ export async function updateStoreSettings(formData: FormData) {
       whatsappNumber: (formData.get("whatsappNumber") as string) || "",
     };
 
-    // ১টি মাত্র ডকুমেন্ট আপডেট বা তৈরি করবে
     await StoreSettings.findOneAndUpdate(
       {},
       { $set: data },

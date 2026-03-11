@@ -45,11 +45,8 @@ export default function AddProductPage() {
           toast.error(result.error);
         } else {
           toast.success("Product Published Successfully!");
-
-          setTimeout(() => {
-            router.push("/admin/products");
-            router.refresh();
-          }, 1500);
+          router.push("/admin/products");
+          router.refresh();
         }
       } catch (err) {
         toast.error("Something went wrong!");
