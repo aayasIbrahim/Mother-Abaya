@@ -87,7 +87,7 @@ export default async function ContactPage() {
                 queries. Our team is ready to help you!
               </p>
               <a
-                href="https://m.me/dopelook21"
+                href={`https://m.me/${settings.facebookUrl.split("/").filter(Boolean).pop()}`}
                 target="_blank"
                 className="inline-flex items-center gap-2 bg-[#B3589D] text-white px-8 py-4 rounded-full font-bold hover:bg-[#a04a8b] transition-all transform hover:scale-105 shadow-lg"
               >

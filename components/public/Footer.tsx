@@ -1,7 +1,12 @@
 import React from "react";
 import Link from "next/link";
 import { getStoreSettings } from "@/actions/settings.actions";
-import { Facebook, Instagram, MessageCircleMore } from "lucide-react";
+import {
+  FaFacebook,
+  FaInstagram,
+  FaWhatsapp,
+  FaRegEnvelope,
+} from "react-icons/fa";
 
 export default async function Footer() {
   const settings = await getStoreSettings();
@@ -22,7 +27,7 @@ export default async function Footer() {
               className="text-blue-600 hover:scale-110 transition-all duration-300 drop-shadow-sm"
               aria-label="Visit Mother Abaya on Facebook"
             >
-              <Facebook size={28} fill="currentColor" strokeWidth={0} />
+              <FaFacebook size={28} />
             </Link>
           )}
           {settings?.instagramUrl && (
@@ -36,7 +41,7 @@ export default async function Footer() {
               className="text-pink-600 hover:scale-110 transition-transform"
               aria-label="Instagram"
             >
-              <Instagram size={32} />
+              <FaInstagram size={28} />
             </Link>
           )}
           {settings?.whatsappNumber && (
@@ -46,11 +51,16 @@ export default async function Footer() {
               className="text-green-500 hover:scale-125 transition-all duration-300 drop-shadow-sm"
               aria-label="WhatsApp"
             >
-              <MessageCircleMore
-                size={28}
-                fill="currentColor"
-                strokeWidth={0}
-              />
+              <FaWhatsapp size={30} />
+            </Link>
+          )}
+          {settings?.supportEmail && (
+            <Link
+              href={`mailto:${settings.supportEmail}`}
+              className="text-gray-600 hover:text-[#B3589D] hover:scale-125 transition-all duration-300 drop-shadow-sm flex items-center justify-center"
+              aria-label="Email Us"
+            >
+              <FaRegEnvelope size={28} />
             </Link>
           )}
         </div>
@@ -99,7 +109,7 @@ export default async function Footer() {
           <p className="text-[10px] md:text-xs text-pink-500 font-bold uppercase tracking-[0.15em]">
             Developed by{" "}
             <a
-              href="https://www.linkedin.com/in/ayas-ibrahim-ai77" 
+              href="https://www.linkedin.com/in/ayas-ibrahim-ai77"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 hover:text-[#B3589D] border-b border-transparent hover:border-[#B3589D] transition-all duration-300 pb-0.5"
