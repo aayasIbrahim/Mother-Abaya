@@ -1,8 +1,11 @@
 import React from "react";
 import PageHero from "@/components/public/PageHero";
 import { MapPin, Phone, Facebook, MessageCircle, Home } from "lucide-react";
+import Link from "next/link";
+import { getStoreSettings } from "@/actions/settings.actions";
 
-const ContactPage = () => {
+export default async function ContactPage() {
+  const settings = await getStoreSettings();
   return (
     <main className="min-h-screen bg-gray-50">
       {/* Hero Section */}
@@ -29,17 +32,25 @@ const ContactPage = () => {
             </div>
 
             {/* Phone Card */}
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-start gap-4">
-              <div className="bg-green-100 p-3 rounded-lg text-green-600">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-start gap-4 transition-all hover:shadow-md">
+              <div className="bg-green-100 p-3 rounded-xl text-green-600">
                 <Phone size={24} />
               </div>
               <div>
-                <h3 className="font-bold text-gray-900 mb-1">Call Us</h3>
-                <p className="text-gray-600 text-sm">01868272067</p>
-                <p className="text-xs text-gray-400">Sat - Thu, 10am - 8pm</p>
+                <h3 className=" font-bold text-gray-900 mb-1  ">Call Us</h3>
+
+                <a
+                  href={`tel:${settings?.whatsappNumber}`}
+                  className="block text-gray-800   hover:text-green-600 transition-colors"
+                >
+                  {settings?.whatsappNumber || "Not Available"}
+                </a>
+
+                <p className="text-[10px] text-gray-400 font-bold uppercase mt-1 tracking-tighter">
+                  Sat - Thu, 10am - 8pm
+                </p>
               </div>
             </div>
-
             {/* Facebook Card */}
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-start gap-4">
               <div className="bg-blue-100 p-3 rounded-lg text-blue-600">
@@ -47,13 +58,17 @@ const ContactPage = () => {
               </div>
               <div>
                 <h3 className="font-bold text-gray-900 mb-1">Facebook</h3>
-                <a
-                  href="https://www.facebook.com/dopelook21/"
+                <Link
+                  href={
+                    settings.facebookUrl.startsWith("http")
+                      ? settings.facebookUrl
+                      : `https://${settings.facebookUrl}`
+                  }
                   target="_blank"
                   className="text-[#B3589D] text-sm hover:underline break-all"
                 >
-                  fb.com/dopelook21
-                </a>
+                  {`https://${settings?.facebookUrl}`}
+                </Link>
               </div>
             </div>
           </div>
@@ -84,6 +99,4 @@ const ContactPage = () => {
       </section>
     </main>
   );
-};
-
-export default ContactPage;
+}
