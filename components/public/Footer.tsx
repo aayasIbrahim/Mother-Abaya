@@ -85,13 +85,27 @@ export default async function Footer() {
         </div>
 
         {/* Copyright Section (Dynamic) */}
-        <div className="border-t border-gray-200 pt-6 text-center">
-          <p className="text-gray-600 font-medium text-sm md:text-base tracking-tight">
+        <div className="border-t border-gray-100 pt-8 mt-8 text-center space-y-3">
+          {/* Main Copyright Text */}
+          <p className="text-gray-500 font-medium text-xs md:text-sm tracking-tight">
             Copyright © {new Date().getFullYear()}{" "}
-            <span className="text-gray-900 font-bold hover:text-[#B3589D] transition-colors cursor-default">
+            <span className="text-gray-900 font-black hover:text-[#B3589D] transition-colors cursor-default">
               Mother Abaya
             </span>
             . All rights reserved.
+          </p>
+
+          {/* Developer Credit - Personalized for Ayas Ibrahim */}
+          <p className="text-[10px] md:text-xs text-pink-500 font-bold uppercase tracking-[0.15em]">
+            Developed by{" "}
+            <a
+              href="https://www.linkedin.com/in/ayas-ibrahim-ai77" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-[#B3589D] border-b border-transparent hover:border-[#B3589D] transition-all duration-300 pb-0.5"
+            >
+              Ayas Ibrahim
+            </a>
           </p>
         </div>
       </div>
