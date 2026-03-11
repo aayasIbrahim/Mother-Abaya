@@ -15,7 +15,7 @@ export interface IStoreSettings {
   whatsappNumber: string;
 }
 
-// ২. মঙ্গুস স্কিমা ডিফাইন করা
+
 const SettingsSchema = new Schema<IStoreSettings>(
   {
     insideDhaka: { 
