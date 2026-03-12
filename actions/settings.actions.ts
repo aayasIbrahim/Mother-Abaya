@@ -16,8 +16,8 @@ export async function updateStoreSettings(formData: FormData) {
       supportEmail: (formData.get("supportEmail") as string) || "",
       // Checkbox হ্যান্ডেল করার সঠিক উপায় (এটি 'on' স্ট্রিং রিটার্ন করে যদি চেকড থাকে)
       maintenanceMode: formData.get("maintenanceMode") === "on",
-      announcementText: (formData.get("announcementText") as string) || "",
-      showAnnouncement: formData.get("showAnnouncement") === "on",
+      address: (formData.get("address") as string) || "",
+      showAddress: formData.get("showAddress") === "on",
       facebookUrl: (formData.get("facebookUrl") as string) || "",
       instagramUrl: (formData.get("instagramUrl") as string) || "",
       whatsappNumber: (formData.get("whatsappNumber") as string) || "",

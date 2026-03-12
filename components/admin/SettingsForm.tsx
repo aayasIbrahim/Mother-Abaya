@@ -6,7 +6,7 @@ import {
   Save,
   Truck,
   CreditCard,
-  Globe,
+  MapPin ,
   BellRing,
   ShieldCheck,
   Loader2,
@@ -166,27 +166,42 @@ export default function SettingsForm({ settings }: { settings: any }) {
           </div>
         </div>
 
-        {/* News Section */}
+        {/* Store Address Section */}
         <div className="bg-white p-8 rounded-[3rem] border border-gray-100 shadow-sm space-y-6">
           <h2 className="text-lg font-black uppercase flex items-center gap-2 border-b pb-4 text-pink-600">
-            <Globe size={20} /> News
+            <MapPin size={20} /> Store Address
           </h2>
-          <textarea
-            name="announcementText"
-            defaultValue={settings?.announcementText || ""}
-            rows={2}
-            className="w-full bg-gray-50 rounded-2xl p-4 font-bold text-xs resize-none outline-none"
-          />
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
-            <span className="text-[11px] font-black uppercase">
-              Publish Banner
-            </span>
-            <input
-              name="showAnnouncement"
-              defaultChecked={Boolean(settings?.showAnnouncement ?? false)}
-              type="checkbox"
-              className="w-6 h-6 accent-[#B3589D]"
-            />
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">
+                Physical Location
+              </label>
+              <textarea
+                name="address"
+                placeholder="Enter your store full address..."
+                defaultValue={settings?.address || ""}
+                rows={3}
+                className="w-full bg-gray-50 rounded-2xl p-5 font-bold text-sm resize-none outline-none focus:ring-2 focus:ring-pink-100 transition-all border border-transparent focus:border-pink-200"
+              />
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
+              <div className="flex flex-col">
+                <span className="text-[11px] font-black uppercase text-gray-800">
+                  Show on Website
+                </span>
+                <span className="text-[9px] text-gray-400 font-bold uppercase">
+                  Display address in footer/contact
+                </span>
+              </div>
+              <input
+                name="showAddress"
+                defaultChecked={Boolean(settings?.showAddress ?? false)}
+                type="checkbox"
+                className="w-6 h-6 accent-[#B3589D] cursor-pointer"
+              />
+            </div>
           </div>
         </div>
 

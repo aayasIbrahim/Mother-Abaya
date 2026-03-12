@@ -1,14 +1,14 @@
 import mongoose, { Schema, model, models } from "mongoose";
 
-// ১. ইন্টারফেস তৈরি (TypeScript এর জন্য)
+
 export interface IStoreSettings {
   insideDhaka: number;
   outsideDhaka: number;
   bkashNumber: string;
   supportEmail: string;
   maintenanceMode: boolean;
-  announcementText: string;
-  showAnnouncement: boolean;
+  address: string;
+  showAddress: boolean;
   lowStockThreshold: number;
   facebookUrl: string;
   instagramUrl: string;
@@ -38,11 +38,11 @@ const SettingsSchema = new Schema<IStoreSettings>(
       type: Boolean, 
       default: false 
     },
-    announcementText: { 
+   address: { 
       type: String, 
-      default: "Welcome to Mother Abaya!" 
+      default: "" 
     },
-    showAnnouncement: { 
+    showAddress: { 
       type: Boolean, 
       default: false 
     },

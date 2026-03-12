@@ -1,58 +1,21 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "@/components/public/Nav";
 import Footer from "@/components/public/Footer";
-
+import { getStoreSettings } from "@/actions/settings.actions";
 import CartDrawer from "@/components/public/cartDrawer";
 
-export const metadata: Metadata = {
-  title: {
-    default: "Mother Abaya | Exclusive Modest Fashion & Abayas",
-    template: "%s | Mother Abaya",
-  },
-  description:
-    "Discover premium quality abayas and modest wear at Mother Abaya. Elegant designs crafted for comfort and style.",
-  keywords: [
-    "Abaya",
-    "Modest Fashion",
-    "Islamic Clothing",
-    "Mother Abaya",
-    "Premium Abayas",
-  ],
-  authors: [{ name: "Mother Abaya Team" }],
-  creator: "Mother Abaya",
-  openGraph: {
-    title: "Mother Abaya | Elegance in Every Stitch",
-    description:
-      "Shop the latest collection of premium abayas and modest fashion.",
-    siteName: "Mother Abaya",
-    locale: "en_US",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Mother Abaya",
-    description: "Premium Modest Wear & Abayas",
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
-
-export default function PublicLayout({
+export default async function PublicLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getStoreSettings();
   return (
     <html lang="en">
       <body className={`antialiased`}>
-        <Navbar />
+        <Navbar settings={settings}/>
         {children}
         <CartDrawer />
         <Footer />
-     
       </body>
     </html>
   );

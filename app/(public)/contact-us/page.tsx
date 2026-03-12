@@ -24,9 +24,7 @@ export default async function ContactPage() {
               <div>
                 <h3 className="font-bold text-gray-900 mb-1">Our Address</h3>
                 <p className="text-gray-600 text-sm leading-relaxed">
-                  Old Al Mithaliya Hotel Bldg., Somali Market Shop #6(B),
-                  <br />
-                  Deira, Dubai, UAE.
+                  {settings.address || "Not Available"}
                 </p>
               </div>
             </div>
