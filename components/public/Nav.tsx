@@ -8,7 +8,7 @@ import TopBanner from "./Topbar";
 import SearchOverlay from "./searchOverlay";
 import { useCartStore } from "@/store/useCartStore";
 
-const Navbar = () => {
+const Navbar = ({ settings }: { settings: any }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { getTotalItems, openCart } = useCartStore();
@@ -23,7 +23,7 @@ const Navbar = () => {
 
   return (
     <nav className="w-full bg-white font-sans relative">
-      <TopBanner />
+      <TopBanner settings={settings}/>
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 md:h-24 items-center justify-between">

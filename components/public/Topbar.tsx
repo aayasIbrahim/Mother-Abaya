@@ -3,7 +3,8 @@
 import { motion } from "framer-motion";
 import { MapPin } from "lucide-react";
 
-const TopBanner = () => {
+const TopBanner = ({ settings }: { settings: any }) => {
+  if (!settings?.showAddress || !settings?.address) return null;
   return (
     // overflow-hidden জরুরি যাতে অ্যানিমেশনের সময় সাইডবার না আসে
     <div className="w-full overflow-hidden bg-[#D8AED3] shadow-sm">
@@ -31,8 +32,7 @@ const TopBanner = () => {
             <p className="text-center text-[9px] leading-tight font-bold uppercase tracking-[0.05em] sm:text-[10px] md:text-xs md:tracking-[0.15em]">
               {/* মোবাইলে টেক্সট ব্রেকিং কন্ট্রোল করার জন্য whitespace-normal */}
               <span className="inline-block whitespace-normal md:whitespace-nowrap">
-                Old Al Mithaliya Hotel Bldg., Somali Market Shop #6(B), Deira,
-                Dubai
+                {settings.address}
               </span>
             </p>
           </div>
