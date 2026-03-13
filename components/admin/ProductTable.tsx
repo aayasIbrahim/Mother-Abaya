@@ -73,7 +73,10 @@ export default function ProductTable({ products }: { products: any[] }) {
                   </span>
                 </td>
                 <td className="px-6 py-4 font-bold text-gray-800">
-                  ৳ {product.price}
+                  ৳{" "}
+                  {product.discountPrice && product.discountPrice > 0
+                    ? product.discountPrice
+                    : product.price}
                 </td>
                 <td className="px-6 py-4 text-sm font-medium text-gray-500">
                   {product.stock} pcs

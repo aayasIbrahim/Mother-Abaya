@@ -7,23 +7,35 @@ import Order from "@/models/Order";
 import { revalidatePath } from "next/cache";
 import { uploadToCloudinary, deleteFromCloudinary } from "@/libs/cloudinary";
 
+
 export const addProduct = async (formData: FormData) => {
   try {
     await connectDB();
 
     const name = formData.get("name") as string;
     const price = Number(formData.get("price"));
+
     const discountPrice = formData.get("discountPrice")
       ? Number(formData.get("discountPrice"))
       : undefined;
-    const category = formData.get("category") as string;
-    const imageFiles = formData.getAll("images") as File[];
-    console.log("Files received:", imageFiles.length); //
 
-    const stock = Number(formData.get("stock"));
+    const category = formData.get("category") as string;
+    const fabric = formData.get("fabric") as string;
     const description = formData.get("description") as string;
 
-    // ২. ভ্যালিডেশন
+    const imageFiles = formData.getAll("images") as File[];
+
+    // sizes parse
+    const sizesString = formData.get("sizes") as string;
+    const parsedSizes = sizesString ? JSON.parse(sizesString) : [];
+
+    // total stock calculate
+    const totalStock = parsedSizes.reduce(
+      (acc: number, curr: any) => acc + (Number(curr.stock) || 0),
+      0
+    );
+
+    // Validation
     if (!imageFiles || imageFiles.length === 0 || imageFiles[0].size === 0) {
       return { error: "Please upload at least one product image." };
     }
@@ -32,48 +44,55 @@ export const addProduct = async (formData: FormData) => {
       return { error: "Invalid product data." };
     }
 
-    if (discountPrice && discountPrice >= price) {
-      return { error: "Discount price must be lower than original price." };
-    }
-
-    if (isNaN(stock) || stock < 0) {
-      return { error: "Invalid stock value." };
-    }
     if (!description || description.trim() === "") {
       return { error: "Product description is required!" };
     }
 
-    // ৩. মাল্টিপল ইমেজ ক্লাউডিনারিতে আপলোড করা
+    if (discountPrice && discountPrice >= price) {
+      return { error: "Discount price must be lower than original price." };
+    }
+
+    if (!parsedSizes.length) {
+      return { error: "Please add at least one size." };
+    }
+
+    // upload images
     const uploadPromises = imageFiles.map((file) => uploadToCloudinary(file));
     const uploadResults: any[] = await Promise.all(uploadPromises);
 
     const imageUrls = uploadResults.map((res) => res.secure_url);
 
+    // create product
     const newProduct = await Product.create({
       name,
       price,
       discountPrice,
       category,
       images: imageUrls,
-      stock,
+      stock: totalStock,
       description,
-      // details: { fabric },
-      // measurements: { kurtiLength },
-      isSale: discountPrice ? true : false,
+      fabric,
+      sizes: parsedSizes,
+      isSale: !!discountPrice,
     });
 
     revalidatePath("/admin/products");
-    revalidatePath(`/admin`);
+    revalidatePath("/admin");
     revalidatePath("/");
+
     return { success: true, message: "Product Published Successfully!" };
+
   } catch (error: any) {
     console.error("Product Error:", error);
-    // ডুপ্লিকেট নাম থাকলে হ্যান্ডেল করা
-    if (error.code === 11000)
+
+    if (error.code === 11000) {
       return { error: "A product with this name already exists." };
+    }
+
     return { error: "Failed to publish the product. Please try again." };
   }
 };
+
 
 export const deleteProduct = async (id: string) => {
   try {
@@ -137,7 +156,6 @@ export const updateProduct = async (id: string, formData: FormData) => {
   try {
     await connectDB();
 
-    // ১. আগের প্রোডাক্টটি খুঁজে বের করা
     const existingProduct = await Product.findById(id);
     if (!existingProduct) return { error: "Product not found!" };
 
@@ -153,7 +171,7 @@ export const updateProduct = async (id: string, formData: FormData) => {
     const description = formData.get("description") as string;
     const newImageFiles = formData.getAll("images") as File[];
 
-    // ২. ফ্রন্টএন্ড থেকে পাঠানো বর্তমানে টিকে থাকা পুরনো ইমেজগুলোর লিস্ট (JSON string থেকে array তে রূপান্তর)
+    // ফ্রন্টএন্ড থেকে পাঠানো বর্তমানে টিকে থাকা পুরনো ইমেজগুলোর লিস্ট (JSON string থেকে array তে রূপান্তর)
     const existingImagesData = formData.get("existingImages") as string;
     let finalImages: string[] = existingImagesData
       ? JSON.parse(existingImagesData)
@@ -178,7 +196,6 @@ export const updateProduct = async (id: string, formData: FormData) => {
       finalImages = [...finalImages, ...newImageUrls];
     }
 
-    // ৪. ডাটাবেস আপডেট
     await Product.findByIdAndUpdate(
       id,
       {
@@ -189,7 +206,8 @@ export const updateProduct = async (id: string, formData: FormData) => {
         stock,
         description,
         images: finalImages,
-        "details.fabric": fabric,
+
+        // "details.fabric": fabric,
         isSale: discountPrice ? true : false,
       },
       { runValidators: true },
@@ -210,7 +228,6 @@ export const updateProduct = async (id: string, formData: FormData) => {
 export async function searchProducts(query: string) {
   try {
     await connectDB();
-
     const products = await Product.find({
       $or: [
         { name: { $regex: query, $options: "i" } },

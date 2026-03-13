@@ -27,9 +27,8 @@ interface ProductProps {
     stock: number;
     description: string;
     images: string[]; // ধরে নিচ্ছি এটি স্ট্রিং অ্যারে
-    details?: {
-      fabric?: string;
-    };
+
+    fabric?: string;
   };
 }
 
@@ -48,9 +47,9 @@ export default function EditProductForm({ product }: ProductProps) {
     const files = e.target.files;
     if (files) {
       const filesArray = Array.from(files);
-      
+
       // ফাইল সাইজ চেক
-      const oversized = filesArray.find(f => f.size > 5 * 1024 * 1024);
+      const oversized = filesArray.find((f) => f.size > 5 * 1024 * 1024);
       if (oversized) return toast.error("Some files are too large! Max 5MB.");
 
       // নতুন ফাইলগুলো স্টেটে যোগ করা
@@ -64,10 +63,12 @@ export default function EditProductForm({ product }: ProductProps) {
 
   // ইমেজ রিমুভ হ্যান্ডলার
   const removeImage = (index: number) => {
-    const isOldImage = index < (product.images?.length || 0) && !selectedFiles[index - (product.images?.length || 0)];
-    
+    const isOldImage =
+      index < (product.images?.length || 0) &&
+      !selectedFiles[index - (product.images?.length || 0)];
+
     setPreviews((prev) => prev.filter((_, i) => i !== index));
-    
+
     // যদি এটি নতুন সিলেক্ট করা ফাইল হয়, তবে ফাইল লিস্ট থেকেও রিমুভ করতে হবে
     const newFileIndex = index - (product.images?.length || 0);
     if (newFileIndex >= 0) {
@@ -85,9 +86,12 @@ export default function EditProductForm({ product }: ProductProps) {
     selectedFiles.forEach((file) => {
       formData.append("images", file);
     });
-    
+
     // যদি আপনি চান সার্ভার জানুক কোন পুরনো ছবিগুলো এখনো আছে
-    formData.set("existingImages", JSON.stringify(previews.filter(p => p.startsWith('http'))));
+    formData.set(
+      "existingImages",
+      JSON.stringify(previews.filter((p) => p.startsWith("http"))),
+    );
 
     startTransition(async () => {
       try {
@@ -192,7 +196,7 @@ export default function EditProductForm({ product }: ProductProps) {
               <input
                 name="fabric"
                 type="text"
-                defaultValue={product.details?.fabric}
+                defaultValue={product.fabric}
                 className="form-input-styled"
               />
             </FormInput>
@@ -209,24 +213,45 @@ export default function EditProductForm({ product }: ProductProps) {
           </div>
 
           {/* Image Upload Area */}
-         <div className="space-y-4">
+          <div className="space-y-4">
             <label className="text-sm font-bold text-gray-700 flex justify-between px-1">
               Product Gallery
-              <span className="text-[11px] text-[#B3589D] uppercase tracking-tighter">Add or remove images</span>
+              <span className="text-[11px] text-[#B3589D] uppercase tracking-tighter">
+                Add or remove images
+              </span>
             </label>
-            
+
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {/* আপলোড বাটন (বক্স আকারে) */}
               <div className="relative group h-32 rounded-3xl border-2 border-dashed border-gray-200 bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:border-[#B3589D] transition-all">
-                <input type="file" name="images" accept="image/*" multiple onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
-                <UploadCloud className="text-gray-400 group-hover:text-[#B3589D]" size={24} />
-                <span className="text-[10px] font-bold text-gray-500 mt-1">Add More</span>
+                <input
+                  type="file"
+                  name="images"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageChange}
+                  className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                />
+                <UploadCloud
+                  className="text-gray-400 group-hover:text-[#B3589D]"
+                  size={24}
+                />
+                <span className="text-[10px] font-bold text-gray-500 mt-1">
+                  Add More
+                </span>
               </div>
 
               {/* ইমেজ প্রিভিউ কার্ডস */}
               {previews.map((src, index) => (
-                <div key={index} className="relative h-32 rounded-3xl border border-gray-100 overflow-hidden shadow-sm group animate-in zoom-in-95 duration-300">
-                  <img src={src} alt="Preview" className="w-full h-full object-cover" />
+                <div
+                  key={index}
+                  className="relative h-32 rounded-3xl border border-gray-100 overflow-hidden shadow-sm group animate-in zoom-in-95 duration-300"
+                >
+                  <img
+                    src={src}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                  />
                   <button
                     type="button"
                     onClick={() => removeImage(index)}
@@ -235,8 +260,10 @@ export default function EditProductForm({ product }: ProductProps) {
                     <X size={14} />
                   </button>
                   {/* যদি এটি পুরনো ইমেজ হয় (Cloudinary URL) */}
-                  {src.startsWith('http') && (
-                    <div className="absolute bottom-0 inset-x-0 bg-[#B3589D]/80 text-[8px] text-white text-center py-1 font-bold uppercase">Stored</div>
+                  {src.startsWith("http") && (
+                    <div className="absolute bottom-0 inset-x-0 bg-[#B3589D]/80 text-[8px] text-white text-center py-1 font-bold uppercase">
+                      Stored
+                    </div>
                   )}
                 </div>
               ))}
