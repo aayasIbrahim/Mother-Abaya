@@ -207,4 +207,23 @@ export const updateProduct = async (id: string, formData: FormData) => {
   }
 };
 
-   
+export async function searchProducts(query: string) {
+  try {
+    await connectDB();
+
+    const products = await Product.find({
+      $or: [
+        { name: { $regex: query, $options: "i" } },
+        { category: { $regex: query, $options: "i" } },
+      ],
+    })
+      .select("name price images category")
+      .limit(8)
+      .lean();
+
+    return JSON.parse(JSON.stringify(products));
+  } catch (error) {
+    console.error("Search Error:", error);
+    return [];
+  }
+}
