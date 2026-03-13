@@ -1,4 +1,3 @@
-
 import React from "react";
 import connectDB from "@/libs/db";
 import Product from "@/models/Product";
@@ -12,12 +11,39 @@ export default async function ShopPage({
 }) {
   const { sort } = await searchParams;
   await connectDB();
-  let sortOption: any = { createdAt: -1 };
-  if (sort === "price_asc") sortOption = { price: 1 };
-  if (sort === "price_desc") sortOption = { price: -1 };
 
-  const productsRaw = await Product.find({}).sort(sortOption).lean(); 
-  const products = JSON.parse(JSON.stringify(productsRaw));
+  let sortOption: any = { createdAt: -1 };
+
+  if (sort === "price_asc") {
+    sortOption = { effectivePrice: 1 };
+  } else if (sort === "price_desc") {
+    sortOption = { effectivePrice: -1 };
+  }
+
+  const products = await Product.aggregate([
+    {
+      $addFields: {
+        // একটি ভার্চুয়াল ফিল্ড 'effectivePrice' তৈরি করা
+        effectivePrice: {
+          $cond: {
+            // যদি discountPrice থাকে এবং তা ০ এর বেশি হয়, তবে সেটিই effectivePrice
+            if: {
+              $and: [
+                { $gt: ["$discountPrice", 0] },
+                { $ne: ["$discountPrice", null] },
+              ],
+            },
+            then: "$discountPrice",
+            else: "$price",
+          },
+        },
+      },
+    },
+    {
+      // আমাদের নতুন effectivePrice ফিল্ড অনুযায়ী সর্ট করা
+      $sort: sortOption,
+    },
+  ]);
 
   return (
     <div className="min-h-screen bg-[#D6B4CE] p-4 md:p-10">

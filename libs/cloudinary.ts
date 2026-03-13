@@ -4,6 +4,7 @@ cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
+  timeout: 60000
 });
 
 export const uploadToCloudinary = async (file: File) => {
@@ -26,7 +27,7 @@ export const deleteFromCloudinary = async (publicId: string) => {
   try {
     const result = await cloudinary.uploader.destroy(publicId);
     
-    return result; // সফল হলে { result: 'ok' } দেয়
+    return result; 
   } catch (err) {
     console.error("Cloudinary Delete Error:", err);
     throw new Error("Failed to delete image from Cloudinary");

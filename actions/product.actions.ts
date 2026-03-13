@@ -5,7 +5,6 @@ import Product from "@/models/Product";
 import { z } from "zod";
 import Order from "@/models/Order";
 import { revalidatePath } from "next/cache";
-// import { initiatePayment } from "@/libs/payment";
 import { uploadToCloudinary, deleteFromCloudinary } from "@/libs/cloudinary";
 
 export const addProduct = async (formData: FormData) => {
@@ -18,17 +17,15 @@ export const addProduct = async (formData: FormData) => {
       ? Number(formData.get("discountPrice"))
       : undefined;
     const category = formData.get("category") as string;
-    const imageFile = formData.get("image") as File;
+    const imageFiles = formData.getAll("images") as File[];
+    console.log("Files received:", imageFiles.length); //
 
     const stock = Number(formData.get("stock"));
     const description = formData.get("description") as string;
 
-    if (!imageFile || imageFile.size === 0) {
-      return { error: "Please upload a product image." };
-    }
-
-    if (!imageFile.type.startsWith("image/")) {
-      return { error: "Only image files are allowed." };
+    // ২. ভ্যালিডেশন
+    if (!imageFiles || imageFiles.length === 0 || imageFiles[0].size === 0) {
+      return { error: "Please upload at least one product image." };
     }
 
     if (!name || isNaN(price) || !category) {
@@ -42,15 +39,22 @@ export const addProduct = async (formData: FormData) => {
     if (isNaN(stock) || stock < 0) {
       return { error: "Invalid stock value." };
     }
+    if (!description || description.trim() === "") {
+      return { error: "Product description is required!" };
+    }
 
-    const uploadRes: any = await uploadToCloudinary(imageFile);
-    const imageUrl = uploadRes.secure_url;
+    // ৩. মাল্টিপল ইমেজ ক্লাউডিনারিতে আপলোড করা
+    const uploadPromises = imageFiles.map((file) => uploadToCloudinary(file));
+    const uploadResults: any[] = await Promise.all(uploadPromises);
+
+    const imageUrls = uploadResults.map((res) => res.secure_url);
+
     const newProduct = await Product.create({
       name,
       price,
       discountPrice,
       category,
-      images: [imageUrl],
+      images: imageUrls,
       stock,
       description,
       // details: { fabric },
@@ -61,7 +65,7 @@ export const addProduct = async (formData: FormData) => {
     revalidatePath("/admin/products");
     revalidatePath(`/admin`);
     revalidatePath("/");
-    return { success: true };
+    return { success: true, message: "Product Published Successfully!" };
   } catch (error: any) {
     console.error("Product Error:", error);
     // ডুপ্লিকেট নাম থাকলে হ্যান্ডেল করা
@@ -75,37 +79,54 @@ export const deleteProduct = async (id: string) => {
   try {
     await connectDB();
 
-    // ১. ডাটাবেস থেকে প্রোডাক্টটি খুঁজে বের করুন
+    // ১. প্রোডাক্টটি খুঁজে বের করা
     const product = await Product.findById(id);
-    if (!product) {
-      return { error: "Product not found!" };
-    }
+    if (!product) return { error: "Product not found!" };
 
-    // ২. ক্লাউডিনারি থেকে ইমেজ ডিলিট করা
-    // আপনার স্কিমা যদি images: [{ url, publicId }] এই ফরম্যাটে হয়:
-    const imageToDelete = product.images?.[0]; // আমরা প্রথম ইমেজটি নিচ্ছি
+    // ২. ক্লাউডিনারি থেকে সব ইমেজ ডিলিট করা
+    if (product.images && product.images.length > 0) {
+      const deletePromises = product.images.map(async (imageUrl: string) => {
+        // ১. URL টি স্প্লিট করুন
+        const parts = imageUrl.split("/");
 
-    if (imageToDelete && imageToDelete.publicId) {
-      const cloudinaryRes = await deleteFromCloudinary(imageToDelete.publicId);
-      console.log("📡 Cloudinary Response:", cloudinaryRes);
+        // ২. ফাইল নেম এবং এক্সটেনশন আলাদা করুন (e.g., image.jpg -> image)
+        const lastPart = parts[parts.length - 1];
+        const publicIdWithoutExtension = lastPart.split(".")[0];
 
-      // ক্লাউডিনারি যদি 'ok' না পাঠায়, তবুও আমরা ডাটাবেস থেকে ডিলিট করতে পারি
-      // অথবা চাইলে এরর রিটার্ন করতে পারি
-      if (cloudinaryRes.result !== "ok") {
-        console.warn(
-          "Cloudinary Image not found or already deleted:",
-          imageToDelete.publicId,
+        // ৩. ফোল্ডার স্ট্রাকচার হ্যান্ডেল করা (Version number এড়িয়ে যাওয়া)
+        // সাধারণত URL থাকে: .../upload/v1234567/folder_name/image_name.jpg
+        // আমরা শুধু v... এর পরের অংশটুকু নেব
+        const vIndex = parts.findIndex(
+          (part) => part.startsWith("v") && !isNaN(Number(part.substring(1))),
         );
-      }
+
+        let publicId = "";
+        if (vIndex !== -1) {
+          // v123... এর পরের সব অংশ যোগ করা (ফোল্ডার থাকলে সেটিও আসবে)
+          publicId =
+            parts.slice(vIndex + 1, parts.length - 1).join("/") +
+            (parts.slice(vIndex + 1, parts.length - 1).length > 0 ? "/" : "") +
+            publicIdWithoutExtension;
+        } else {
+          publicId = publicIdWithoutExtension;
+        }
+
+        console.log("🚀 Corrected publicId for deletion:", publicId);
+        return deleteFromCloudinary(publicId);
+      });
+
+      // সবগুলো ইমেজ একসাথে ডিলিট করার রিকোয়েস্ট পাঠানো
+      await Promise.all(deletePromises);
     }
 
-    // ৩. ডাটাবেস থেকে প্রোডাক্ট রিমুভ করা
+    // ৩. ডাটাবেস থেকে প্রোডাক্ট মুছে ফেলা
     await Product.findByIdAndDelete(id);
 
-    // ৪. পেজ রিফ্রেশ (Next.js Cache Clear)
+    // ৪. ক্যাশ ক্লিয়ার করা
     revalidatePath("/admin/products");
+    revalidatePath("/");
 
-    return { success: true };
+    return { success: true, message: "Product and all images deleted!" };
   } catch (error: any) {
     console.error("Delete Action Error:", error);
     return { error: "Failed to delete product. Please try again." };
@@ -130,17 +151,31 @@ export const updateProduct = async (id: string, formData: FormData) => {
     const fabric = formData.get("fabric") as string;
     const stock = Number(formData.get("stock"));
     const description = formData.get("description") as string;
-    const imageFile = formData.get("image") as File;
+    const newImageFiles = formData.getAll("images") as File[];
 
-    // ৩. ইমেজ লজিক (আপনার স্কিমা যেহেতু [String] সাপোর্ট করে)
-    let finalImages = existingProduct.images; // ডিফল্ট পুরানো ইমেজ
+    // ২. ফ্রন্টএন্ড থেকে পাঠানো বর্তমানে টিকে থাকা পুরনো ইমেজগুলোর লিস্ট (JSON string থেকে array তে রূপান্তর)
+    const existingImagesData = formData.get("existingImages") as string;
+    let finalImages: string[] = existingImagesData
+      ? JSON.parse(existingImagesData)
+      : [];
+    if (
+      newImageFiles &&
+      newImageFiles.length > 0 &&
+      newImageFiles[0].size > 0
+    ) {
+      console.log(
+        `📸 ${newImageFiles.length} new images detected, uploading...`,
+      );
 
-    if (imageFile && imageFile.size > 0) {
-      console.log("📸 New image detected, uploading...");
-      const uploadRes: any = await uploadToCloudinary(imageFile);
+      const uploadPromises = newImageFiles.map((file) =>
+        uploadToCloudinary(file),
+      );
+      const uploadResults: any[] = await Promise.all(uploadPromises);
 
-      // শুধুমাত্র সিকিউর ইউআরএল স্ট্রিং হিসেবে সেভ করা (আপনার addProduct এর মত)
-      finalImages = [uploadRes.secure_url];
+      const newImageUrls = uploadResults.map((res) => res.secure_url);
+
+      // পুরনো ইমেজগুলোর সাথে নতুনগুলো যোগ করা
+      finalImages = [...finalImages, ...newImageUrls];
     }
 
     // ৪. ডাটাবেস আপডেট
@@ -153,7 +188,7 @@ export const updateProduct = async (id: string, formData: FormData) => {
         category,
         stock,
         description,
-        images: finalImages, // এটি এখন Array of Strings, তাই Cast Error হবে না
+        images: finalImages,
         "details.fabric": fabric,
         isSale: discountPrice ? true : false,
       },

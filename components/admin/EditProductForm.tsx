@@ -10,13 +10,13 @@ import {
   DollarSign,
   Ruler,
   RefreshCcw,
+  X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { updateProduct } from "@/actions/product.actions";
 import { toast } from "react-hot-toast";
 
-// Types Define করা ভালো প্র্যাকটিস
 interface ProductProps {
   product: {
     _id: string;
@@ -26,7 +26,7 @@ interface ProductProps {
     discountPrice?: number;
     stock: number;
     description: string;
-    images: any[];
+    images: string[]; // ধরে নিচ্ছি এটি স্ট্রিং অ্যারে
     details?: {
       fabric?: string;
     };
@@ -38,52 +38,66 @@ export default function EditProductForm({ product }: ProductProps) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
 
-  // ১. ইমেজ ইউআরএল হ্যান্ডলিং (Safe access)
-  const initialImageUrl = useMemo(() => {
-    const img = product.images?.[0];
-    return typeof img === "string" ? img : img?.url || null;
-  }, [product.images]);
-
-  const [preview, setPreview] = useState<string | null>(initialImageUrl);
+  // --- ১. স্টেট আপডেট (Multiple Images) ---
+  const [previews, setPreviews] = useState<string[]>(product.images || []);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [category, setCategory] = useState(product.category || "abaya");
 
-  // ইমেজ প্রিভিউ লজিক
+  // ইমেজ সিলেক্ট হ্যান্ডলার
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        // 5MB limit
-        return toast.error("File is too large! Max 5MB.");
-      }
-      const reader = new FileReader();
-      reader.onloadend = () => setPreview(reader.result as string);
-      reader.readAsDataURL(file);
+    const files = e.target.files;
+    if (files) {
+      const filesArray = Array.from(files);
+      
+      // ফাইল সাইজ চেক
+      const oversized = filesArray.find(f => f.size > 5 * 1024 * 1024);
+      if (oversized) return toast.error("Some files are too large! Max 5MB.");
+
+      // নতুন ফাইলগুলো স্টেটে যোগ করা
+      setSelectedFiles((prev) => [...prev, ...filesArray]);
+
+      // প্রিভিউ তৈরি করা
+      const newPreviews = filesArray.map((file) => URL.createObjectURL(file));
+      setPreviews((prev) => [...prev, ...newPreviews]);
     }
   };
 
-  // ২. অপ্টিমাইজড ক্লায়েন্ট অ্যাকশন
+  // ইমেজ রিমুভ হ্যান্ডলার
+  const removeImage = (index: number) => {
+    const isOldImage = index < (product.images?.length || 0) && !selectedFiles[index - (product.images?.length || 0)];
+    
+    setPreviews((prev) => prev.filter((_, i) => i !== index));
+    
+    // যদি এটি নতুন সিলেক্ট করা ফাইল হয়, তবে ফাইল লিস্ট থেকেও রিমুভ করতে হবে
+    const newFileIndex = index - (product.images?.length || 0);
+    if (newFileIndex >= 0) {
+      setSelectedFiles((prev) => prev.filter((_, i) => i !== newFileIndex));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Default behavior বন্ধ করা
-
+    e.preventDefault();
     const formData = new FormData(e.currentTarget);
-
-    // ম্যানুয়ালি স্টেট ভ্যালু ইনজেক্ট করা (২ বার ক্লিক সমস্যা সমাধান করে)
     formData.set("category", category);
+
+    // --- ২. ম্যানুয়ালি সব ছবি অ্যাড করা ---
+    formData.delete("images"); // আগের ডাটা ক্লিয়ার করা
+    selectedFiles.forEach((file) => {
+      formData.append("images", file);
+    });
+    
+    // যদি আপনি চান সার্ভার জানুক কোন পুরনো ছবিগুলো এখনো আছে
+    formData.set("existingImages", JSON.stringify(previews.filter(p => p.startsWith('http'))));
 
     startTransition(async () => {
       try {
         const result = await updateProduct(product._id, formData);
-
         if (result?.error) {
           toast.error(result.error);
         } else {
-          toast.success("Piece Updated Successfully! ✨");
-
-          // রাউটার রিফ্রেশ এবং ব্যাক
+          toast.success("Product Updated Successfully! ✨");
           router.refresh();
-          setTimeout(() => {
-            router.push("/admin/products");
-          }, 800);
+          router.push("/admin/products");
         }
       } catch (err) {
         toast.error("An unexpected error occurred.");
@@ -195,46 +209,39 @@ export default function EditProductForm({ product }: ProductProps) {
           </div>
 
           {/* Image Upload Area */}
-          <div className="space-y-3">
+         <div className="space-y-4">
             <label className="text-sm font-bold text-gray-700 flex justify-between px-1">
-              Display Image
-              <span className="text-[11px] text-[#B3589D] uppercase tracking-tighter">
-                New upload replaces old
-              </span>
+              Product Gallery
+              <span className="text-[11px] text-[#B3589D] uppercase tracking-tighter">Add or remove images</span>
             </label>
-            <div className="relative group h-72 w-full rounded-[2.5rem] border-2 border-dashed border-gray-200 bg-gray-50/50 hover:bg-gray-50 transition-all flex items-center justify-center overflow-hidden">
-              <input
-                type="file"
-                name="image"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="absolute inset-0 opacity-0 cursor-pointer z-20"
-              />
-              {preview ? (
-                <div className="relative w-full h-full p-6 animate-in zoom-in-95 duration-300">
-                  <img
-                    src={preview}
-                    alt="Preview"
-                    className="w-full h-full object-contain drop-shadow-md"
-                  />
-                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10">
-                    <RefreshCcw
-                      className="text-white animate-spin-slow"
-                      size={32}
-                    />
-                  </div>
+            
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {/* আপলোড বাটন (বক্স আকারে) */}
+              <div className="relative group h-32 rounded-3xl border-2 border-dashed border-gray-200 bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:border-[#B3589D] transition-all">
+                <input type="file" name="images" accept="image/*" multiple onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
+                <UploadCloud className="text-gray-400 group-hover:text-[#B3589D]" size={24} />
+                <span className="text-[10px] font-bold text-gray-500 mt-1">Add More</span>
+              </div>
+
+              {/* ইমেজ প্রিভিউ কার্ডস */}
+              {previews.map((src, index) => (
+                <div key={index} className="relative h-32 rounded-3xl border border-gray-100 overflow-hidden shadow-sm group animate-in zoom-in-95 duration-300">
+                  <img src={src} alt="Preview" className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg active:scale-90"
+                  >
+                    <X size={14} />
+                  </button>
+                  {/* যদি এটি পুরনো ইমেজ হয় (Cloudinary URL) */}
+                  {src.startsWith('http') && (
+                    <div className="absolute bottom-0 inset-x-0 bg-[#B3589D]/80 text-[8px] text-white text-center py-1 font-bold uppercase">Stored</div>
+                  )}
                 </div>
-              ) : (
-                <div className="text-center space-y-2">
-                  <UploadCloud className="mx-auto text-gray-400" size={48} />
-                  <p className="text-sm font-bold text-gray-500">
-                    Click to Change Image
-                  </p>
-                </div>
-              )}
+              ))}
             </div>
           </div>
-
           {/* Description Area */}
           <div className="space-y-3">
             <label className="text-sm font-bold text-gray-700 px-1">
