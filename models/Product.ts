@@ -8,8 +8,17 @@ const ProductSchema = new Schema(
     category: { type: String, required: true },
     discountPrice: { type: Number },
     images: [{ type: String, required: true }],
-    sizes: [{ type: String, enum: ["S", "M", "L", "XL"], default: ["S"] }],
+    sizes: [
+      {
+        label: { type: String, required: true },
+        chest: { type: String },
+        length: { type: String },
+        stock: { type: Number, default: 0 },
+      },
+    ],
     stock: { type: Number, default: 0 },
+    fabric: { type: String },
+    isSale: { type: Boolean },
   },
   { timestamps: true },
 );

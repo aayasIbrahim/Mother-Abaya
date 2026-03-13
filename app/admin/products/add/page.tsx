@@ -22,6 +22,27 @@ export default function AddProductPage() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [category, setCategory] = useState("abaya");
+  const [sizes, setSizes] = useState([
+    { label: "", chest: "", length: "", stock: 0 },
+  ]);
+
+  const addSizeRow = () => {
+    setSizes([...sizes, { label: "", chest: "", length: "", stock: 0 }]);
+  };
+
+  const removeSizeRow = (index: number) => {
+    setSizes(sizes.filter((_, i) => i !== index));
+  };
+
+  const handleSizeChange = (
+    index: number,
+    field: string,
+    value: string | number,
+  ) => {
+    const updatedSizes = [...sizes];
+    updatedSizes[index] = { ...updatedSizes[index], [field]: value };
+    setSizes(updatedSizes);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setCategory(e.target.value);
@@ -48,6 +69,7 @@ export default function AddProductPage() {
     startTransition(async () => {
       try {
         // ১. ডিফল্ট images রিমুভ করে দেওয়া (যাতে input-এর ১টি ছবি না যায়)
+        formData.append("sizes", JSON.stringify(sizes));
         formData.delete("images");
 
         // ২. selectedFiles স্টেট থেকে লুপ চালিয়ে সব ছবি যোগ করা
@@ -189,7 +211,79 @@ export default function AddProductPage() {
                 />
               </div>
             </div>
+            <div className="space-y-4 md:col-span-2">
+              <div className="flex items-center justify-between ml-1">
+                <label className="text-sm font-bold text-gray-700">
+                  Size & Stock Management
+                </label>
+                <button
+                  type="button"
+                  onClick={addSizeRow}
+                  className="text-xs font-bold text-[#B3589D] hover:underline flex items-center gap-1"
+                >
+                  + Add Another Size
+                </button>
+              </div>
 
+              <div className="space-y-3">
+                {sizes.map((size, index) => (
+                  <div
+                    key={index}
+                    className="grid grid-cols-2 md:grid-cols-5 gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100 relative group"
+                  >
+                    <input
+                      placeholder="Size (e.g. 52)"
+                      value={size.label}
+                      onChange={(e) =>
+                        handleSizeChange(index, "label", e.target.value)
+                      }
+                      className="p-3 bg-white border border-gray-100 rounded-xl text-sm outline-none"
+                      required
+                    />
+                    <input
+                      placeholder="Chest (inch)"
+                      value={size.chest}
+                      onChange={(e) =>
+                        handleSizeChange(index, "chest", e.target.value)
+                      }
+                      className="p-3 bg-white border border-gray-100 rounded-xl text-sm outline-none"
+                    />
+                    <input
+                      placeholder="Length (inch)"
+                      value={size.length}
+                      onChange={(e) =>
+                        handleSizeChange(index, "length", e.target.value)
+                      }
+                      className="p-3 bg-white border border-gray-100 rounded-xl text-sm outline-none"
+                    />
+                    <input
+                      type="number"
+                      placeholder="Stock"
+                      value={size.stock}
+                      onChange={(e) =>
+                        handleSizeChange(
+                          index,
+                          "stock",
+                          parseInt(e.target.value),
+                        )
+                      }
+                      className="p-3 bg-white border border-gray-100 rounded-xl text-sm outline-none"
+                      required
+                    />
+
+                    {sizes.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeSizeRow(index)}
+                        className="absolute -right-2 -top-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X size={14} />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
             {/* Fabric */}
             <div className="space-y-2">
               <label className="text-sm font-bold text-gray-700 ml-1">
@@ -204,26 +298,6 @@ export default function AddProductPage() {
                   name="fabric"
                   type="text"
                   placeholder="Diamond Georgette"
-                  className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none"
-                />
-              </div>
-            </div>
-
-            {/* Stock */}
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700 ml-1">
-                Stock
-              </label>
-              <div className="relative">
-                <Package
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                  size={20}
-                />
-                <input
-                  name="stock"
-                  type="number"
-                  required
-                  placeholder="10"
                   className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none"
                 />
               </div>
