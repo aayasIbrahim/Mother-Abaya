@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useTransition, useMemo } from "react";
+import ImageUploader from "./ImageUploader";
 import {
   ArrowLeft,
   Save,
@@ -10,13 +11,23 @@ import {
   DollarSign,
   Ruler,
   RefreshCcw,
-  X,
+  Trash2,
+  ChevronDown,
+  AlignLeft,
+  Image,
+  Zap,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { updateProduct } from "@/actions/product.actions";
 import { toast } from "react-hot-toast";
-
+import SizeManager from "./SizeManager";
+interface SizeObject {
+  label: string;
+  chest: string;
+  length: string;
+  stock: number;
+}
 interface ProductProps {
   product: {
     _id: string;
@@ -26,9 +37,9 @@ interface ProductProps {
     discountPrice?: number;
     stock: number;
     description: string;
-    images: string[]; // ধরে নিচ্ছি এটি স্ট্রিং অ্যারে
-
+    images: string[];
     fabric?: string;
+    sizes?: SizeObject[];
   };
 }
 
@@ -41,8 +52,12 @@ export default function EditProductForm({ product }: ProductProps) {
   const [previews, setPreviews] = useState<string[]>(product.images || []);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [category, setCategory] = useState(product.category || "abaya");
+  const [sizes, setSizes] = useState<SizeObject[]>(
+    product.sizes && product.sizes.length > 0
+      ? product.sizes
+      : [{ label: "", chest: "", length: "", stock: 0 }],
+  );
 
-  // ইমেজ সিলেক্ট হ্যান্ডলার
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
@@ -79,19 +94,17 @@ export default function EditProductForm({ product }: ProductProps) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    formData.set("category", category);
 
-    // --- ২. ম্যানুয়ালি সব ছবি অ্যাড করা ---
-    formData.delete("images"); // আগের ডাটা ক্লিয়ার করা
-    selectedFiles.forEach((file) => {
-      formData.append("images", file);
-    });
+    // ইমেজ ডাটা প্রিপারেশন
+    formData.delete("images");
+    selectedFiles.forEach((file) => formData.append("images", file));
 
-    // যদি আপনি চান সার্ভার জানুক কোন পুরনো ছবিগুলো এখনো আছে
-    formData.set(
-      "existingImages",
-      JSON.stringify(previews.filter((p) => p.startsWith("http"))),
-    );
+    // কোন পুরনো ছবিগুলো এখনো রাখা হয়েছে (Cloudinary URLs)
+    const existingImages = previews.filter((p) => p.startsWith("http"));
+    formData.set("existingImages", JSON.stringify(existingImages));
+
+    // সাইজ অবজেক্ট পাঠানো
+    formData.set("sizes", JSON.stringify(sizes));
 
     startTransition(async () => {
       try {
@@ -110,214 +123,144 @@ export default function EditProductForm({ product }: ProductProps) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 pb-20 animate-in fade-in duration-500">
-      {/* Back Link */}
-      <div className="flex items-center justify-between">
+    <div className="max-w-5xl mx-auto space-y-8 pb-24 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* Navigation & Actions */}
+      <div className="flex items-center justify-between px-2">
         <Link
           href="/admin/products"
-          className="group flex items-center gap-2 text-gray-500 hover:text-[#B3589D] transition-all font-bold"
+          className="group flex items-center gap-2.5 text-gray-400 hover:text-[#B3589D] transition-all font-bold text-sm"
         >
-          <ArrowLeft
-            size={20}
-            className="group-hover:-translate-x-1 transition-transform"
-          />
+          <div className="p-2 bg-white rounded-xl shadow-sm group-hover:bg-pink-50 transition-colors">
+            <ArrowLeft
+              size={18}
+              className="group-hover:-translate-x-1 transition-transform"
+            />
+          </div>
           Back to Inventory
         </Link>
+
+        <div className="flex items-center gap-3">
+          <span className="hidden md:block text-[10px] font-black text-gray-300 uppercase tracking-[0.2em]">
+            Product ID: {product._id}
+          </span>
+        </div>
       </div>
 
-      <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-pink-100/30 overflow-hidden border border-gray-100">
-        {/* Header */}
-        <div className="bg-[#B3589D] p-10 text-white text-center relative overflow-hidden">
-          <div className="absolute -top-6 -right-6 opacity-10 rotate-12">
-            <RefreshCcw size={120} />
-          </div>
-          <h1 className="text-3xl font-black italic tracking-widest">
-            Edit Product
-          </h1>
-          <p className="text-pink-100/80 text-sm font-medium mt-2">
-            ID: <span className="font-mono text-xs">{product._id}</span>
-          </p>
-        </div>
-
-        {/* Form */}
-        <form
-          ref={formRef}
-          onSubmit={handleSubmit}
-          className="p-8 md:p-12 space-y-10"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-            {/* Input Wrapper Component style */}
-            <FormInput label="Product Title" icon={<Package size={20} />}>
-              <input
-                name="name"
-                type="text"
-                required
-                defaultValue={product.name}
-                className="form-input-styled"
-              />
-            </FormInput>
-
-            <FormInput label="Category" icon={<Tag size={20} />}>
-              <select
-                name="category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="form-input-styled appearance-none cursor-pointer"
-              >
-                <option value="abaya">Abaya</option>
-                <option value="3-piece">3-Piece Suit</option>
-                <option value="hijab">Hijab</option>
-              </select>
-            </FormInput>
-
-            <FormInput label="Price (৳)" icon={<DollarSign size={20} />}>
-              <input
-                name="price"
-                type="number"
-                required
-                defaultValue={product.price}
-                className="form-input-styled"
-              />
-            </FormInput>
-
-            <FormInput
-              label="Discount Price"
-              icon={<DollarSign size={20} className="text-pink-400" />}
-            >
-              <input
-                name="discountPrice"
-                type="number"
-                defaultValue={product.discountPrice}
-                className="form-input-styled"
-              />
-            </FormInput>
-
-            <FormInput label="Fabric Type" icon={<Ruler size={20} />}>
-              <input
-                name="fabric"
-                type="text"
-                defaultValue={product.fabric}
-                className="form-input-styled"
-              />
-            </FormInput>
-
-            <FormInput label="Stock Quantity" icon={<Package size={20} />}>
-              <input
-                name="stock"
-                type="number"
-                required
-                defaultValue={product.stock}
-                className="form-input-styled"
-              />
-            </FormInput>
+      {/* Main Form Container */}
+      <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
+        {/* Section 1: Core Information */}
+        <div className="bg-white rounded-[3rem] shadow-xl shadow-pink-100/20 border border-gray-100/50 overflow-hidden">
+          <div className="bg-gradient-to-r from-[#B3589D] to-[#9c4a88] p-8 md:p-12 text-white relative">
+            <div className="relative z-10">
+              <h1 className="text-3xl md:text-4xl font-black tracking-tight">
+                Edit Product
+              </h1>
+              <p className="text-pink-100/70 text-sm mt-2 font-medium">
+                Update your product details and inventory status
+              </p>
+            </div>
+            <RefreshCcw className="absolute -right-8 -top-8 text-white/10 w-40 h-40 rotate-12" />
           </div>
 
-          {/* Image Upload Area */}
-          <div className="space-y-4">
-            <label className="text-sm font-bold text-gray-700 flex justify-between px-1">
-              Product Gallery
-              <span className="text-[11px] text-[#B3589D] uppercase tracking-tighter">
-                Add or remove images
-              </span>
-            </label>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {/* আপলোড বাটন (বক্স আকারে) */}
-              <div className="relative group h-32 rounded-3xl border-2 border-dashed border-gray-200 bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:border-[#B3589D] transition-all">
+          <div className="p-8 md:p-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <FormInput label="Product Title" icon={<Package size={18} />}>
                 <input
-                  type="file"
-                  name="images"
-                  accept="image/*"
-                  multiple
-                  onChange={handleImageChange}
-                  className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                  name="name"
+                  type="text"
+                  required
+                  defaultValue={product.name}
+                  className="form-input-styled"
+                  placeholder="e.g. Premium Silk Abaya"
                 />
-                <UploadCloud
-                  className="text-gray-400 group-hover:text-[#B3589D]"
-                  size={24}
-                />
-                <span className="text-[10px] font-bold text-gray-500 mt-1">
-                  Add More
-                </span>
+              </FormInput>
+
+              <FormInput label="Category" icon={<Tag size={18} />}>
+                <div className="relative">
+                  <select
+                    name="category"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="form-input-styled appearance-none cursor-pointer"
+                  >
+                    <option value="abaya">Abaya</option>
+                    <option value="3-piece">3-Piece Suit</option>
+                    <option value="hijab">Hijab</option>
+                  </select>
+                  <ChevronDown
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                    size={16}
+                  />
+                </div>
+              </FormInput>
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormInput
+                  label="Base Price (৳)"
+                  icon={<DollarSign size={18} />}
+                >
+                  <input
+                    name="price"
+                    type="number"
+                    required
+                    defaultValue={product.price}
+                    className="form-input-styled"
+                  />
+                </FormInput>
+                <FormInput
+                  label="Discount (৳)"
+                  icon={<Zap size={18} className="text-orange-400" />}
+                >
+                  <input
+                    name="discountPrice"
+                    type="number"
+                    defaultValue={product.discountPrice}
+                    className="form-input-styled font-bold text-[#B3589D]"
+                  />
+                </FormInput>
               </div>
 
-              {/* ইমেজ প্রিভিউ কার্ডস */}
-              {previews.map((src, index) => (
-                <div
-                  key={index}
-                  className="relative h-32 rounded-3xl border border-gray-100 overflow-hidden shadow-sm group animate-in zoom-in-95 duration-300"
-                >
-                  <img
-                    src={src}
-                    alt="Preview"
-                    className="w-full h-full object-cover"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeImage(index)}
-                    className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg active:scale-90"
-                  >
-                    <X size={14} />
-                  </button>
-                  {/* যদি এটি পুরনো ইমেজ হয় (Cloudinary URL) */}
-                  {src.startsWith("http") && (
-                    <div className="absolute bottom-0 inset-x-0 bg-[#B3589D]/80 text-[8px] text-white text-center py-1 font-bold uppercase">
-                      Stored
-                    </div>
-                  )}
-                </div>
-              ))}
+              <FormInput label="Fabric Type" icon={<Ruler size={18} />}>
+                <input
+                  name="fabric"
+                  type="text"
+                  defaultValue={product.fabric}
+                  className="form-input-styled"
+                  placeholder="e.g. Dubai Cherry Georgette"
+                />
+              </FormInput>
             </div>
           </div>
-          {/* Description Area */}
-          <div className="space-y-3">
-            <label className="text-sm font-bold text-gray-700 px-1">
-              Product Story / Details
-            </label>
-            <textarea
-              name="description"
-              rows={5}
-              defaultValue={product.description}
-              className="w-full p-6 bg-gray-50 border border-gray-100 rounded-[2.5rem] focus:ring-4 focus:ring-[#B3589D]/10 focus:bg-white outline-none transition-all resize-none shadow-inner"
-            ></textarea>
-          </div>
+        </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={isPending}
-            className={`w-full py-6 rounded-[2.5rem] text-white font-black text-lg transition-all flex items-center justify-center gap-4 shadow-xl ${
-              isPending
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-[#B3589D] hover:bg-[#9c4a88] hover:shadow-pink-200/50 active:scale-[0.98]"
-            }`}
-          >
-            {isPending ? (
-              <div className="w-7 h-7 border-4 border-white/30 border-t-white rounded-full animate-spin" />
-            ) : (
-              <>
-                <Save size={24} />
-                <span>CONFIRM CHANGES</span>
-              </>
-            )}
-          </button>
-        </form>
-      </div>
+        {/* Section 2: Inventory & Sizing */}
+        <div className="bg-gray-50/50 rounded-[3rem] p-2 border border-gray-100">
+          <SizeManager sizes={sizes} setSizes={setSizes} />
+        </div>
+
+        <ImageUploader
+          previews={previews}
+          onImageChange={handleImageChange}
+          onRemove={removeImage}
+        />
+      </form>
 
       <style jsx>{`
         .form-input-styled {
           width: 100%;
-          padding: 1rem 1rem 1rem 3.5rem;
+          padding: 1.125rem 1.125rem 1.125rem 3.5rem;
           background: #f9fafb;
-          border: 1px solid #f3f4f6;
-          border-radius: 1.25rem;
+          border: 2px solid transparent;
+          border-radius: 1.5rem;
           outline: none;
-          transition: all 0.2s ease;
+          font-weight: 600;
+          color: #374151;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .form-input-styled:focus {
           background: white;
-          border-color: #b3589d;
-          box-shadow: 0 0 0 4px rgba(179, 88, 157, 0.1);
+          border-color: rgba(179, 88, 157, 0.3);
+          box-shadow: 0 10px 15px -3px rgba(179, 88, 157, 0.1);
         }
       `}</style>
     </div>

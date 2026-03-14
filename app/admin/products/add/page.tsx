@@ -3,46 +3,31 @@ import React, { useState, useRef, useTransition } from "react";
 import {
   ArrowLeft,
   Save,
-  X,
-  UploadCloud,
   Package,
   Tag,
   DollarSign,
   Ruler,
+  Sparkles,
+  AlignLeft,
+  ChevronDown,
+  Zap,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
 import { addProduct } from "@/actions/product.actions";
+import SizeManager from "@/components/admin/SizeManager";
+import ImageUploader from "@/components/admin/ImageUploader";
 
 export default function AddProductPage() {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const [previews, setPreviews] = useState<string[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [category, setCategory] = useState("abaya");
   const [sizes, setSizes] = useState([
     { label: "", chest: "", length: "", stock: 0 },
   ]);
-
-  const addSizeRow = () => {
-    setSizes([...sizes, { label: "", chest: "", length: "", stock: 0 }]);
-  };
-
-  const removeSizeRow = (index: number) => {
-    setSizes(sizes.filter((_, i) => i !== index));
-  };
-
-  const handleSizeChange = (
-    index: number,
-    field: string,
-    value: string | number,
-  ) => {
-    const updatedSizes = [...sizes];
-    updatedSizes[index] = { ...updatedSizes[index], [field]: value };
-    setSizes(updatedSizes);
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setCategory(e.target.value);
@@ -105,290 +90,235 @@ export default function AddProductPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 pb-20">
-      <div className="flex items-center justify-between">
+    <div className="max-w-7xl mx-auto space-y-8 pb-24 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* Navigation */}
+      <div className="flex items-center justify-between px-2">
         <Link
           href="/admin/products"
-          className="flex items-center gap-2 text-gray-500 hover:text-[#B3589D] transition-colors font-bold"
+          className="group flex items-center gap-2.5 text-gray-400 hover:text-[#B3589D] transition-all font-bold text-sm"
         >
-          <ArrowLeft size={20} /> Back to List
+          <div className="p-2 bg-white rounded-xl shadow-sm group-hover:bg-pink-50 transition-colors">
+            <ArrowLeft
+              size={18}
+              className="group-hover:-translate-x-1 transition-transform"
+            />
+          </div>
+          Back to Inventory
         </Link>
+        <div className="flex items-center gap-2 px-4 py-2 bg-pink-50 rounded-full">
+          <Sparkles size={14} className="text-[#B3589D]" />
+          <span className="text-[10px] font-black text-[#B3589D] uppercase tracking-widest">
+            New Arrival Mode
+          </span>
+        </div>
       </div>
 
-      <div className="bg-white rounded-[2.5rem] shadow-xl shadow-pink-100/20 overflow-hidden border border-gray-100">
-        <div className="bg-[#B3589D] p-8 text-white text-center">
-          <h1 className="text-2xl font-black italic">MOTHER ABAYA</h1>
-          <p className="text-pink-100 text-sm font-medium">
-            Add a luxury piece to your collection
-          </p>
+      <form
+        action={onSubmit}
+        encType="multipart/form-data"
+        className="space-y-8"
+      >
+        {/* Section 1: Core Info */}
+        <div className="bg-white rounded-[3rem] shadow-xl shadow-pink-100/20 border border-gray-100/50 overflow-hidden">
+          <div className="bg-gradient-to-r from-[#B3589D] to-[#8a3d76] p-10 md:p-14 text-white relative">
+            <div className="relative z-10">
+              <h1 className="text-3xl md:text-5xl font-black tracking-tighter italic">
+                CREATE PRODUCT
+              </h1>
+              <p className="text-pink-100/80 text-sm mt-3 font-medium max-w-md uppercase tracking-wider">
+                Launch your next masterpiece to the luxury collection
+              </p>
+            </div>
+            <Package className="absolute -right-10 -top-10 text-white/10 w-48 h-48 rotate-12" />
+          </div>
+
+          <div className="p-8 md:p-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Product Title */}
+              <div className="space-y-2.5">
+                <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                  Product Title
+                </label>
+                <div className="relative group">
+                  <Package
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#B3589D] transition-colors"
+                    size={20}
+                  />
+                  <input
+                    name="name"
+                    type="text"
+                    required
+                    placeholder="e.g. LUXURY BAGICHA"
+                    className="form-input-styled"
+                  />
+                </div>
+              </div>
+
+              {/* Category */}
+              <div className="space-y-2.5">
+                <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                  Category
+                </label>
+                <div className="relative group">
+                  <Tag
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#B3589D] transition-colors"
+                    size={20}
+                  />
+                  <select
+                    name="category"
+                    value={category}
+                    onChange={handleChange}
+                    className="form-input-styled appearance-none cursor-pointer"
+                  >
+                    <option value="abaya">Abaya</option>
+                    <option value="3-piece">3-Piece Suit</option>
+                    <option value="hijab">Hijab</option>
+                  </select>
+                  <ChevronDown
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                    size={16}
+                  />
+                </div>
+              </div>
+
+              {/* Pricing Grid */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2.5">
+                  <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                    Price (৳)
+                  </label>
+                  <div className="relative group">
+                    <DollarSign
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#B3589D]"
+                      size={20}
+                    />
+                    <input
+                      name="price"
+                      type="number"
+                      required
+                      placeholder="2580"
+                      className="form-input-styled"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2.5">
+                  <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                    Discount (৳)
+                  </label>
+                  <div className="relative group">
+                    <Zap
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-400"
+                      size={20}
+                    />
+                    <input
+                      name="discountPrice"
+                      type="number"
+                      placeholder="2250"
+                      className="form-input-styled font-bold text-[#B3589D]"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Fabric */}
+              <div className="space-y-2.5">
+                <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">
+                  Fabric Material
+                </label>
+                <div className="relative group">
+                  <Ruler
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#B3589D]"
+                    size={20}
+                  />
+                  <input
+                    name="fabric"
+                    type="text"
+                    placeholder="Diamond Georgette"
+                    className="form-input-styled"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <form
-          action={onSubmit}
-          encType="multipart/form-data"
-          className="p-8 md:p-10 space-y-8"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Name */}
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700 ml-1">
-                Product Title
-              </label>
-              <div className="relative">
-                <Package
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                  size={20}
-                />
-                <input
-                  name="name"
-                  type="text"
-                  required
-                  placeholder="BAGICHA"
-                  className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-[#B3589D]/20 outline-none transition-all"
-                />
-              </div>
-            </div>
+        {/* Section 2: Variations */}
+        <div className="bg-gray-50/50 rounded-[3.5rem] p-2 border border-gray-100 shadow-inner">
+          <SizeManager sizes={sizes} setSizes={setSizes} />
+        </div>
 
-            {/* Category */}
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700 ml-1">
-                Category
-              </label>
-              <div className="relative">
-                <Tag
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                  size={20}
-                />
-                <select
-                  name="category"
-                  value={category}
-                  onChange={handleChange}
-                  required
-                  className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none appearance-none"
-                >
-                  <option value="abaya">Abaya</option>
-                  <option value="3-piece">3-Piece Suit</option>
-                  <option value="hijab">Hijab</option>
-                </select>
-              </div>
-            </div>
+        {/* Section 3: Media & Content */}
+        <div className="bg-white rounded-[3.5rem] shadow-xl shadow-pink-100/20 border border-gray-100/50 p-8 md:p-14 space-y-12">
+          {/* Gallery */}
+          <ImageUploader
+            previews={previews}
+            onImageChange={handleImageChange}
+            onRemove={removeImage}
+          />
 
-            {/* Price */}
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700 ml-1">
-                Original Price
-              </label>
-              <div className="relative">
-                <DollarSign
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                  size={20}
-                />
-                <input
-                  name="price"
-                  type="number"
-                  required
-                  placeholder="2580"
-                  className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none"
-                />
-              </div>
-            </div>
-
-            {/* Discount Price */}
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700 ml-1">
-                Discount Price (Optional)
-              </label>
-              <div className="relative">
-                <DollarSign
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-pink-400"
-                  size={20}
-                />
-                <input
-                  name="discountPrice"
-                  type="number"
-                  placeholder="2250"
-                  className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none"
-                />
-              </div>
-            </div>
-            <div className="space-y-4 md:col-span-2">
-              <div className="flex items-center justify-between ml-1">
-                <label className="text-sm font-bold text-gray-700">
-                  Size & Stock Management
-                </label>
-                <button
-                  type="button"
-                  onClick={addSizeRow}
-                  className="text-xs font-bold text-[#B3589D] hover:underline flex items-center gap-1"
-                >
-                  + Add Another Size
-                </button>
-              </div>
-
-              <div className="space-y-3">
-                {sizes.map((size, index) => (
-                  <div
-                    key={index}
-                    className="grid grid-cols-2 md:grid-cols-5 gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100 relative group"
-                  >
-                    <input
-                      placeholder="Size (e.g. 52)"
-                      value={size.label}
-                      onChange={(e) =>
-                        handleSizeChange(index, "label", e.target.value)
-                      }
-                      className="p-3 bg-white border border-gray-100 rounded-xl text-sm outline-none"
-                      required
-                    />
-                    <input
-                      placeholder="Chest (inch)"
-                      value={size.chest}
-                      onChange={(e) =>
-                        handleSizeChange(index, "chest", e.target.value)
-                      }
-                      className="p-3 bg-white border border-gray-100 rounded-xl text-sm outline-none"
-                    />
-                    <input
-                      placeholder="Length (inch)"
-                      value={size.length}
-                      onChange={(e) =>
-                        handleSizeChange(index, "length", e.target.value)
-                      }
-                      className="p-3 bg-white border border-gray-100 rounded-xl text-sm outline-none"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Stock"
-                      value={size.stock}
-                      onChange={(e) =>
-                        handleSizeChange(
-                          index,
-                          "stock",
-                          parseInt(e.target.value),
-                        )
-                      }
-                      className="p-3 bg-white border border-gray-100 rounded-xl text-sm outline-none"
-                      required
-                    />
-
-                    {sizes.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeSizeRow(index)}
-                        className="absolute -right-2 -top-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <X size={14} />
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-            {/* Fabric */}
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700 ml-1">
-                Fabric Material
-              </label>
-              <div className="relative">
-                <Ruler
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                  size={20}
-                />
-                <input
-                  name="fabric"
-                  type="text"
-                  placeholder="Diamond Georgette"
-                  className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none"
-                />
-              </div>
-            </div>
-          </div>
-          {/* Image URL */}
-
+          {/* Description Area */}
           <div className="space-y-4">
-            <label className="text-sm font-bold text-gray-700 ml-1">
-              Product Images (Multiple)
-            </label>
-
-            {/* আপলোড এরিয়া */}
-            <div className="relative h-40 w-full rounded-[2rem] border-2 border-dashed border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden group hover:border-[#B3589D] transition-colors">
-              <input
-                ref={fileInputRef}
-                name="images"
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleImageChange}
-                className="absolute inset-0 opacity-0 cursor-pointer z-10"
-              />
-              <div className="flex flex-col items-center pointer-events-none">
-                <UploadCloud
-                  className="text-gray-400 group-hover:text-[#B3589D] mb-2"
-                  size={32}
-                />
-                <span className="text-xs font-bold text-gray-500">
-                  Click to add multiple images
-                </span>
-              </div>
-            </div>
-
-            {/* প্রিভিউ গ্রিড */}
-            {previews.length > 0 && (
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-4 mt-4">
-                {previews.map((src, index) => (
-                  <div
-                    key={index}
-                    className="relative aspect-square rounded-2xl border border-gray-100 overflow-hidden shadow-sm group"
-                  >
-                    <img
-                      src={src}
-                      alt={`Preview ${index}`}
-                      className="w-full h-full object-cover"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeImage(index)}
-                      className="absolute top-1 right-1 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
-                    >
-                      <X size={12} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <p className="text-[10px] text-gray-400 ml-2 italic">
-              Tip: You can select multiple images at once. Square (1:1) works
-              best.
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-gray-700 ml-1">
-              Description
+            <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-3 flex items-center gap-2">
+              <AlignLeft size={14} className="text-[#B3589D]" />
+              Product Story / Detailed Description
             </label>
             <textarea
               name="description"
-              rows={4}
-              placeholder="Product details..."
-              className="w-full p-6 bg-gray-50 border border-gray-100 rounded-[2rem] outline-none transition-all resize-none"
+              rows={6}
+              placeholder="Describe the elegance of this product..."
+              className="w-full p-8 bg-gray-50 border border-gray-100 rounded-[3rem] focus:ring-4 focus:ring-[#B3589D]/10 focus:bg-white focus:border-[#B3589D]/30 outline-none transition-all resize-none shadow-inner text-gray-600 leading-relaxed font-medium"
             ></textarea>
           </div>
+
+          {/* Submit Action */}
           <button
             type="submit"
             disabled={isPending}
-            className="w-full bg-[#B3589D] text-white font-black py-5 rounded-[2rem] shadow-xl hover:bg-[#a04a8b] transition-all flex items-center justify-center gap-3"
+            className={`w-full py-7 rounded-[2.5rem] text-white font-black text-xl transition-all flex items-center justify-center gap-4 shadow-2xl ${
+              isPending
+                ? "bg-gray-300 cursor-not-allowed"
+                : "bg-gray-900 hover:bg-black hover:shadow-gray-400 active:scale-[0.98]"
+            }`}
           >
             {isPending ? (
-              <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <div className="w-7 h-7 border-4 border-white/20 border-t-white rounded-full animate-spin" />
             ) : (
               <>
-                <Save size={20} /> Publish Product
+                <div className="p-2.5 bg-white/10 rounded-2xl">
+                  <Save size={22} />
+                </div>
+                <span className="tracking-[0.15em] uppercase">
+                  Publish Product
+                </span>
               </>
             )}
           </button>
-        </form>
-      </div>
+        </div>
+      </form>
+
+      <style jsx>{`
+        .form-input-styled {
+          width: 100%;
+          padding: 1.125rem 1.125rem 1.125rem 3.5rem;
+          background: #f9fafb;
+          border: 2px solid transparent;
+          border-radius: 1.5rem;
+          outline: none;
+          font-weight: 700;
+          font-size: 0.875rem;
+          color: #1f2937;
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .form-input-styled:focus {
+          background: white;
+          border-color: rgba(179, 88, 157, 0.4);
+          box-shadow: 0 15px 25px -5px rgba(179, 88, 157, 0.15);
+        }
+        .form-input-styled::placeholder {
+          color: #9ca3af;
+          font-weight: 500;
+        }
+      `}</style>
     </div>
   );
 }
