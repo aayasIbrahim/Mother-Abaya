@@ -75,7 +75,7 @@ export default async function ProductDetailsPage({
                 Fabric Details:
               </span>
               <span className="text-gray-800 font-black uppercase text-xs">
-                {product.details?.fabric || "Premium Quality"}
+                {product?.fabric || "Premium Quality"}
               </span>
             </div>
             {/* Quantity Selector - নতুন যোগ করা হয়েছে */}

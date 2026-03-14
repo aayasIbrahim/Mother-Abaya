@@ -2,11 +2,9 @@
 
 import connectDB from "@/libs/db";
 import Product from "@/models/Product";
-import { z } from "zod";
-import Order from "@/models/Order";
+
 import { revalidatePath } from "next/cache";
 import { uploadToCloudinary, deleteFromCloudinary } from "@/libs/cloudinary";
-
 
 export const addProduct = async (formData: FormData) => {
   try {
@@ -32,7 +30,7 @@ export const addProduct = async (formData: FormData) => {
     // total stock calculate
     const totalStock = parsedSizes.reduce(
       (acc: number, curr: any) => acc + (Number(curr.stock) || 0),
-      0
+      0,
     );
 
     // Validation
@@ -81,7 +79,6 @@ export const addProduct = async (formData: FormData) => {
     revalidatePath("/");
 
     return { success: true, message: "Product Published Successfully!" };
-
   } catch (error: any) {
     console.error("Product Error:", error);
 
@@ -92,7 +89,6 @@ export const addProduct = async (formData: FormData) => {
     return { error: "Failed to publish the product. Please try again." };
   }
 };
-
 
 export const deleteProduct = async (id: string) => {
   try {
@@ -170,6 +166,15 @@ export const updateProduct = async (id: string, formData: FormData) => {
     const stock = Number(formData.get("stock"));
     const description = formData.get("description") as string;
     const newImageFiles = formData.getAll("images") as File[];
+    // ২. সাইজ ডাটা পার্স করা এবং টোটাল স্টক ক্যালকুলেশন
+    const sizesData = formData.get("sizes") as string;
+    const parsedSizes = sizesData ? JSON.parse(sizesData) : [];
+
+    // সব সাইজের স্টক যোগফলই হবে মেইন স্টক
+    const totalStock = parsedSizes.reduce(
+      (acc: number, curr: any) => acc + (Number(curr.stock) || 0),
+      0,
+    );
 
     // ফ্রন্টএন্ড থেকে পাঠানো বর্তমানে টিকে থাকা পুরনো ইমেজগুলোর লিস্ট (JSON string থেকে array তে রূপান্তর)
     const existingImagesData = formData.get("existingImages") as string;
@@ -203,14 +208,14 @@ export const updateProduct = async (id: string, formData: FormData) => {
         price,
         discountPrice,
         category,
-        stock,
+        stock: totalStock,
         description,
         images: finalImages,
-
-        // "details.fabric": fabric,
+        fabric,
+        sizes: parsedSizes,
         isSale: discountPrice ? true : false,
       },
-      { runValidators: true },
+      { runValidators: true, new: true },
     );
 
     console.log("✅ Product Updated Successfully");
