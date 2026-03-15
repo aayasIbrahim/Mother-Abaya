@@ -112,7 +112,7 @@ export default function EditProductForm({ product }: ProductProps) {
         if (result?.error) {
           toast.error(result.error);
         } else {
-          toast.success("Product Updated Successfully! ✨");
+          toast.success("Product Updated Successfully!");
           router.refresh();
           router.push("/admin/products");
         }
@@ -238,11 +238,54 @@ export default function EditProductForm({ product }: ProductProps) {
           <SizeManager sizes={sizes} setSizes={setSizes} />
         </div>
 
-        <ImageUploader
-          previews={previews}
-          onImageChange={handleImageChange}
-          onRemove={removeImage}
-        />
+        {/* Section 3: Media & Content */}
+        <div className="bg-white rounded-[3rem] shadow-xl shadow-pink-100/20 border border-gray-100/50 p-8 md:p-12 space-y-10">
+          {/* Gallery Section */}
+          <ImageUploader
+            previews={previews}
+            onImageChange={handleImageChange}
+            onRemove={removeImage}
+          />
+
+          {/* Description Section */}
+          <div className="space-y-4">
+            <label className="text-sm font-bold text-gray-700 ml-2 flex items-center gap-2">
+              <AlignLeft size={16} className="text-[#B3589D]" />
+              Product Story & Details
+            </label>
+            <textarea
+              name="description"
+              rows={5}
+              defaultValue={product.description}
+              className="w-full p-8 bg-gray-50 border border-gray-100 rounded-[2.5rem] focus:ring-4 focus:ring-[#B3589D]/10 focus:bg-white focus:border-[#B3589D]/30 outline-none transition-all resize-none shadow-inner text-gray-600 leading-relaxed"
+              placeholder="Tell the story of this product..."
+            ></textarea>
+          </div>
+
+          {/* Final Action Button */}
+          <button
+            type="submit"
+            disabled={isPending}
+            className={`w-full py-6 rounded-[2rem] text-white font-black text-lg transition-all flex items-center justify-center gap-4 shadow-2xl ${
+              isPending
+                ? "bg-gray-300 cursor-not-allowed"
+                : "bg-gray-900 hover:bg-black hover:shadow-gray-300 active:scale-[0.98]"
+            }`}
+          >
+            {isPending ? (
+              <div className="w-6 h-6 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+            ) : (
+              <>
+                <div className="p-2 bg-white/10 rounded-xl">
+                  <Save size={20} />
+                </div>
+                <span className="tracking-widest uppercase text-sm">
+                  Update Product
+                </span>
+              </>
+            )}
+          </button>
+        </div>
       </form>
 
       <style jsx>{`
@@ -261,6 +304,11 @@ export default function EditProductForm({ product }: ProductProps) {
           background: white;
           border-color: rgba(179, 88, 157, 0.3);
           box-shadow: 0 10px 15px -3px rgba(179, 88, 157, 0.1);
+        }
+        @keyframes shimmer {
+          100% {
+            transform: translateX(100%);
+          }
         }
       `}</style>
     </div>

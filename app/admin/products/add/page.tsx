@@ -274,20 +274,40 @@ export default function AddProductPage() {
           <button
             type="submit"
             disabled={isPending}
-            className={`w-full py-7 rounded-[2.5rem] text-white font-black text-xl transition-all flex items-center justify-center gap-4 shadow-2xl ${
-              isPending
-                ? "bg-gray-300 cursor-not-allowed"
-                : "bg-gray-900 hover:bg-black hover:shadow-gray-400 active:scale-[0.98]"
-            }`}
+            className={`
+    w-full group relative overflow-hidden transition-all duration-500
+    /* মোবাইল এবং ডেস্কটপের জন্য আলাদা সাইজ */
+    py-5 md:py-7 
+    rounded-[1.5rem] md:rounded-[2.5rem] 
+    text-white font-black 
+    text-lg md:text-xl
+    flex items-center justify-center gap-3 md:gap-4 
+    shadow-xl hover:shadow-2xl
+    ${
+      isPending
+        ? "bg-gray-300 cursor-not-allowed"
+        : "bg-gray-900 hover:bg-black hover:shadow-gray-400 active:scale-[0.97]"
+    }
+  `}
           >
+            {/* Hover Glow Effect (শুধুমাত্র ডেস্কটপে ভালো লাগে) */}
+            {!isPending && (
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+            )}
+
             {isPending ? (
-              <div className="w-7 h-7 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 md:w-7 md:h-7 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+                <span className="text-sm md:text-base font-bold animate-pulse">
+                  Processing...
+                </span>
+              </div>
             ) : (
               <>
-                <div className="p-2.5 bg-white/10 rounded-2xl">
-                  <Save size={22} />
+                <div className="p-2 md:p-2.5 bg-white/10 rounded-xl md:rounded-2xl group-hover:rotate-12 transition-transform duration-300">
+                  <Save size={20} className="md:w-[22px] md:h-[22px]" />
                 </div>
-                <span className="tracking-[0.15em] uppercase">
+                <span className="tracking-[0.1em] md:tracking-[0.15em] uppercase text-sm md:text-base">
                   Publish Product
                 </span>
               </>
