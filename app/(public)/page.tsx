@@ -79,11 +79,9 @@ export default async function ShopPage({
                 name={item.name}
                 originalPrice={item.price}
                 salePrice={item.discountPrice || item.price}
-                imageUrl={
-                  typeof item.images[0] === "string"
-                    ? item.images[0]
-                    : item.images[0]?.url
-                }
+                images={item.images.map((img: any) =>
+                  typeof img === "string" ? img : img?.url,
+                )}
                 isSale={item.discountPrice > 0}
               />
             ))}
