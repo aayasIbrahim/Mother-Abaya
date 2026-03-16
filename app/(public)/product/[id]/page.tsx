@@ -21,9 +21,10 @@ export default async function ProductDetailsPage({
 
   const product = JSON.parse(JSON.stringify(productRaw));
 
+
   return (
     <div className="min-h-screen bg-[#FDF7FB] p-6 md:p-20">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 bg-white p-8 rounded-[3rem] shadow-xl border border-pink-50/50">
+     `` <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 bg-white p-8 rounded-[3rem] shadow-xl border border-pink-50/50">
         {/* Image Section */}
         <div className="relative group rounded-[2.5rem] overflow-hidden bg-gray-50 border border-gray-100 shadow-inner">
           <img
@@ -67,7 +68,6 @@ export default async function ProductDetailsPage({
             {product.description}
           </p>
 
-        
           <ProductActionSection product={product} />
           <div className="pt-4 space-y-6">
             <div className="flex items-center gap-4">
