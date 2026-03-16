@@ -221,6 +221,7 @@ export const updateProduct = async (id: string, formData: FormData) => {
     console.log("✅ Product Updated Successfully");
 
     revalidatePath("/admin/products");
+    revalidatePath(`/product/${id}`);
     revalidatePath(`/admin/products/edit/${id}`);
 
     return { success: true };
