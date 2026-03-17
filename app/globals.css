@@ -24,3 +24,14 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.swiper-slide-thumb-active div {
+ border-color: #db2777 !important; 
+  opacity: 1 !important;
+}
+.thumb-swiper .swiper-slide-thumb-active div {
+  border-color: #db2777 !important;
+  opacity: 1 !important;
+  filter: grayscale(0) !important;
+  transform: scale(1) !important;
+}

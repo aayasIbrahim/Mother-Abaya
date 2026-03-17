@@ -14,7 +14,7 @@ export default function ProductImageSlider({ images }: { images: any[] }) {
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null);
 
   const imageList = images.map((img) =>
-    typeof img === "string" ? img : img?.url
+    typeof img === "string" ? img : img?.url,
   );
 
   return (
@@ -28,7 +28,10 @@ export default function ProductImageSlider({ images }: { images: any[] }) {
             nextEl: ".custom-next",
             prevEl: ".custom-prev",
           }}
-          thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
+          thumbs={{
+            swiper:
+              thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null,
+          }}
           modules={[FreeMode, Navigation, Thumbs]}
           className="aspect-[3/4] md:aspect-[4/5] w-full"
         >
@@ -44,20 +47,23 @@ export default function ProductImageSlider({ images }: { images: any[] }) {
 
           {/* Sale Badge */}
           <div className="absolute top-4 left-4 z-10 bg-white/90 backdrop-blur-md px-3 py-1 rounded shadow-sm">
-             <span className="text-[10px] font-black uppercase text-gray-900 tracking-tighter">Sale!</span>
+            <span className="text-[10px] font-black uppercase text-gray-900 tracking-tighter">
+              Sale!
+            </span>
           </div>
 
           {/* Full Screen Icon (Bottom Right) */}
           <button className="absolute bottom-4 right-4 z-10 p-2 bg-white/80 backdrop-blur-md rounded-lg text-gray-700 hover:bg-white transition-all shadow-sm">
-             <Maximize2 size={18} />
+            <Maximize2 size={18} />
           </button>
 
           {/* Custom Navigation Arrows */}
-          <button className="custom-prev absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white/90 backdrop-blur-md rounded-full shadow-lg text-gray-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <ChevronLeft size={24} />
+          {/* Navigation Arrows - Always Visible */}
+          <button className="custom-prev absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 flex items-center justify-center bg-white rounded-full shadow-xl text-gray-900 border border-gray-50 hover:bg-gray-50 transition-all active:scale-90">
+            <ChevronLeft size={24} strokeWidth={2.5} />
           </button>
-          <button className="custom-next absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white/90 backdrop-blur-md rounded-full shadow-lg text-gray-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <ChevronRight size={24} />
+          <button className="custom-next absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 flex items-center justify-center bg-white rounded-full shadow-xl text-gray-900 border border-gray-50 hover:bg-gray-50 transition-all active:scale-90">
+            <ChevronRight size={24} strokeWidth={2.5} />
           </button>
         </Swiper>
       </div>
@@ -74,9 +80,25 @@ export default function ProductImageSlider({ images }: { images: any[] }) {
           className="thumb-swiper h-24"
         >
           {imageList.map((url, index) => (
-            <SwiperSlide key={index} className="cursor-pointer">
-              <div className="w-full h-full rounded-md overflow-hidden border-2 transition-all swiper-slide-thumb-active:border-gray-900 border-transparent grayscale-[0.5] swiper-slide-thumb-active:grayscale-0 shadow-sm">
-                <img src={url} className="w-full h-full object-cover" />
+            <SwiperSlide key={index} className="cursor-pointer group">
+              <div
+                className="w-full h-full rounded-md overflow-hidden border-2 transition-all duration-300 
+      /* ডিফল্ট অবস্থা (In-active) */
+      border-transparent opacity-60 grayscale-[0.5] scale-95
+      
+      /* একটিভ অবস্থা (Active Mode) - যখন স্লাইডার এই ইমেজে থাকবে */
+      [.swiper-slide-thumb-active_&]:border-pink-600
+      [.swiper-slide-thumb-active_&]:opacity-100 
+      [.swiper-slide-thumb-active_&]:grayscale-0 
+      [.swiper-slide-thumb-active_&]:scale-100 
+      
+      shadow-sm"
+              >
+                <img
+                  src={url}
+                  alt={`thumbnail-${index}`}
+                  className="w-full h-full object-cover"
+                />
               </div>
             </SwiperSlide>
           ))}
