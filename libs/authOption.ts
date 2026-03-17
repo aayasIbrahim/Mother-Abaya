@@ -48,25 +48,22 @@ export const authOptions: NextAuthOptions = {
       authorize: async (credentials) => {
         try {
           if (!credentials?.email || !credentials?.password) return null;
-
           await connectDB();
-
-          const email = credentials.email.trim().toLowerCase(); // ✅ normalize
+          const email = credentials.email.trim().toLowerCase(); 
           const user = await User.findOne({ email });
           if (!user) {
             console.log("User not found");
             return null;
           }
 
-          const isValid = await bcrypt.compare(
+          const isValidPassword = await bcrypt.compare(
             credentials.password,
             user.password,
           );
-          if (!isValid) {
+          if (!isValidPassword) {
             console.log("Password incorrect");
             return null;
           }
-
           return {
             id: user._id.toString(),
             name: user.name ?? null,
@@ -81,7 +78,6 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
-
   callbacks: {
     async jwt({ token, user, trigger, session }) {
       // লগইনের সময় টোকেনে ডেটা সেট করা

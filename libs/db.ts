@@ -8,12 +8,11 @@ export default async function connectDB() {
   try {
     await mongoose.connect(process.env.MONGO_URI as string, {
       dbName: "Mother_Abaya",
-
     });
     isConnected = true;
-    console.log("✅ MongoDB connected");
+    console.log("MongoDB connected");
   } catch (error) {
-    console.error("❌ DB connection error", error);
+    console.error("DB connection error", error);
     throw error;
   }
 }

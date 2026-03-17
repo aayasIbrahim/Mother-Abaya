@@ -19,7 +19,7 @@ export const uploadToCloudinary = async (file: File) => {
   // Alternative: use base64 string
   const base64 = `data:${file.type};base64,${buffer.toString("base64")}`;
   const result = await cloudinary.uploader.upload(base64);
-  return result; // contains secure_url & public_id
+  return result; 
 };
 
 
