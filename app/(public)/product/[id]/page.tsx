@@ -1,8 +1,9 @@
-// app/product/[id]/page.tsx
+
 import React from "react";
 import connectDB from "@/libs/db";
 import Product from "@/models/Product";
 import { notFound } from "next/navigation";
+import ProductImageSlider from "@/components/public/ProductImageSlider";
 import ProductActionSection from "@/components/public/ProductActionSection";
 
 export default async function ProductDetailsPage({
@@ -24,18 +25,10 @@ export default async function ProductDetailsPage({
 
   return (
     <div className="min-h-screen bg-[#FDF7FB] p-6 md:p-20">
-     `` <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 bg-white p-8 rounded-[3rem] shadow-xl border border-pink-50/50">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 bg-white p-8 rounded-[3rem] shadow-xl border border-pink-50/50">
         {/* Image Section */}
-        <div className="relative group rounded-[2.5rem] overflow-hidden bg-gray-50 border border-gray-100 shadow-inner">
-          <img
-            src={
-              typeof product.images[0] === "string"
-                ? product.images[0]
-                : product.images[0]?.url
-            }
-            alt={product.name}
-            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-          />
+        <div className="relative group ">
+         <ProductImageSlider images={product.images} />
         </div>
 
         {/* Content Section */}
@@ -78,7 +71,7 @@ export default async function ProductDetailsPage({
                 {product?.fabric || "Premium Quality"}
               </span>
             </div>
-            {/* Quantity Selector - নতুন যোগ করা হয়েছে */}
+          
           </div>
         </div>
       </div>

@@ -6,7 +6,6 @@ import { z } from "zod";
 import Order from "@/models/Order";
 import StoreSettings from "@/models/Settings";
 import { revalidatePath } from "next/cache";
-
 const OrderSchema = z.object({
   name: z.string().trim().min(2, "Name is required").max(50),
   address: z.string().trim().min(5, "Address is required").max(200),
@@ -30,29 +29,21 @@ const OrderSchema = z.object({
     )
     .min(1, "Your cart cannot be empty"),
 });
-
 export async function createOrderAction(formData: any) {
   try {
-    // ১. ডাটাবেস কানেকশন
     await connectDB();
     const settings = await StoreSettings.findOne({}).lean();
     const insideDhaka = settings?.insideDhaka || 80;
     const outsideDhaka = settings?.outsideDhaka || 150;
-    // ২. ইনপুট ভ্যালিডেশন
     const validatedData = OrderSchema.parse(formData);
-
-    // ৩. প্রোডাক্ট ডাটা চেক করা
     const productIds = validatedData.items.map((i) => i.id);
     const dbProducts = await Product.find({ _id: { $in: productIds } });
 
     if (dbProducts.length !== productIds.length) {
       throw new Error("Some products in your cart are no longer available.");
     }
-
     let subtotal = 0;
     const orderItems = [];
-
-    // ৪. স্টক চেক এবং প্রাইস ক্যালকুলেশন
     for (const item of validatedData.items) {
       const product = dbProducts.find((p) => p._id.toString() === item.id);
 
@@ -139,8 +130,6 @@ export async function createOrderAction(formData: any) {
     };
   }
 }
-
-
 
 export async function updateOrderStatus(orderId: string, newStatus: string) {
   try {
