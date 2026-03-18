@@ -8,11 +8,12 @@ export default async function PublicLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const settings = await getStoreSettings();
+  const settingsRaw = await getStoreSettings();
+  const settings = JSON.parse(JSON.stringify(settingsRaw));
   return (
     <html lang="en">
       <body className={`antialiased`}>
-        <Navbar settings={settings}/>
+        <Navbar settings={settings} />
         {children}
         <CartDrawer />
         <Footer />
