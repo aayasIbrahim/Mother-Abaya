@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import ProductImageSlider from "@/components/public/ProductImageSlider";
 import ProductActionSection from "@/components/public/ProductActionSection";
 import RelatedProducts from "@/components/public/RelatedProducts";
+import RecentlyViewed from "@/components/public/RecentlyViewed";
 
 export default async function ProductDetailsPage({
   params,
@@ -80,6 +81,9 @@ export default async function ProductDetailsPage({
       </div>
       <div className="max-w-6xl mx-auto">
         <RelatedProducts products={relatedProducts} />
+      </div>
+      <div className="max-w-6xl mx-auto">
+        <RecentlyViewed/>
       </div>
     </div>
   );

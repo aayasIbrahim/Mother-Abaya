@@ -250,3 +250,28 @@ export async function searchProducts(query: string) {
     return [];
   }
 }
+
+
+export async function getRecentlyViewedProducts(ids: string[]) {
+  try {
+    if (!ids || ids.length === 0) return [];
+
+    await connectDB();
+
+    // ডাটাবেস থেকে আইডি অনুযায়ী প্রোডাক্ট ফেচ করা
+    const products = await Product.find({ 
+      _id: { $in: ids },
+    }).lean();
+
+    // ইউজার যেভাবে দেখেছে (Order) সেই অনুযায়ী সাজানো
+    const sortedProducts = ids
+      .map((id) => products.find((p: any) => p._id.toString() === id))
+      .filter(Boolean);
+
+    // Next.js Server Action থেকে ডাটা পাঠানোর আগে প্লেইন অবজেক্টে কনভার্ট করা জরুরি
+    return JSON.parse(JSON.stringify(sortedProducts));
+  } catch (error) {
+    console.error("Error in Server Action:", error);
+    return [];
+  }
+}
