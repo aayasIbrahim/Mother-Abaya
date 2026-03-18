@@ -23,19 +23,17 @@ export default async function OrderDetailsPage({
 }) {
   const { id } = await params;
   if (!mongoose.Types.ObjectId.isValid(id)) return notFound();
-  
-  await connectDB();
 
+  await connectDB();
 
   const rawOrder = await Order.findById(id)
     .populate({
       path: "items.product",
-      model: Product, 
+      model: Product,
     })
     .lean();
 
   if (!rawOrder) return notFound();
-
 
   const order = JSON.parse(JSON.stringify(rawOrder));
 

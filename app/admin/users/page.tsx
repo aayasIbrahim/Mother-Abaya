@@ -13,8 +13,8 @@ export default async function AdminUsersPage({
 
   const resolvedParams = await searchParams;
   const query = resolvedParams.q || "";
-  const currentPage = Number(resolvedParams.page) || 1; 
-  const limit = 5; 
+  const currentPage = Number(resolvedParams.page) || 1;
+  const limit = 5;
   const skip = (currentPage - 1) * limit;
 
   // সার্চ ফিল্টার লজিক
@@ -29,11 +29,7 @@ export default async function AdminUsersPage({
 
   // ১. ডাটা এবং টোটাল কাউন্ট একসাথে আনা (প্যাজিনেশন লজিকসহ)
   const [usersData, totalUsers] = await Promise.all([
-    User.find(filter)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .lean(),
+    User.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
     User.countDocuments(filter), // ফিল্টার অনুযায়ী মোট কতজন ইউজার আছে
   ]);
 
@@ -69,7 +65,7 @@ export default async function AdminUsersPage({
         </div>
       )}
 
-      <Pagination currentPage={currentPage } totalPages={totalPages}/>
+      <Pagination currentPage={currentPage} totalPages={totalPages} />
 
       <div className="text-xs text-gray-400 font-bold uppercase tracking-widest px-4">
         Showing {users.length} of {totalUsers} users

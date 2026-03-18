@@ -134,7 +134,7 @@ export default function AdminLayout({
                 "Dashboard"}
             </h2>
           </div>
-      
+
           <AdminProfile session={session} />
         </header>
 

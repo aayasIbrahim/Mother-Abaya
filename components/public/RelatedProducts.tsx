@@ -26,7 +26,7 @@ export default function RelatedProducts({ products }: { products: any[] }) {
       </div>
 
       {/* Carousel Area - স্লাইডারের বাইরের 'group' সরিয়ে 'slider-container' বা অন্য নাম দিন */}
-      <div className="relative px-4 md:px-0 group/slider"> 
+      <div className="relative px-4 md:px-0 group/slider">
         <Swiper
           modules={[Navigation, Autoplay]}
           spaceBetween={20}
@@ -35,7 +35,7 @@ export default function RelatedProducts({ products }: { products: any[] }) {
             nextEl: ".related-next",
             prevEl: ".related-prev",
           }}
-          autoplay={{ delay: 5000, disableOnInteraction: false }}
+          autoplay={{ delay: 2000, disableOnInteraction: false }}
           breakpoints={{
             640: { slidesPerView: 2.2 },
             1024: { slidesPerView: 3 },
@@ -51,7 +51,9 @@ export default function RelatedProducts({ products }: { products: any[] }) {
                 originalPrice={item.price}
                 salePrice={item.discountPrice || 0}
                 images={item.images}
-                isSale={item.discountPrice > 0 && item.discountPrice < item.price}
+                isSale={
+                  item.discountPrice > 0 && item.discountPrice < item.price
+                }
               />
             </SwiperSlide>
           ))}
