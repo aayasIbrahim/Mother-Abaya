@@ -1,10 +1,10 @@
-
 import React from "react";
 import connectDB from "@/libs/db";
 import Product from "@/models/Product";
 import { notFound } from "next/navigation";
 import ProductImageSlider from "@/components/public/ProductImageSlider";
 import ProductActionSection from "@/components/public/ProductActionSection";
+import RelatedProducts from "@/components/public/RelatedProducts";
 
 export default async function ProductDetailsPage({
   params,
@@ -15,20 +15,24 @@ export default async function ProductDetailsPage({
   await connectDB();
 
   const productRaw = await Product.findById(id).lean();
-
+  const relatedProductsRaw = await Product.find({
+    category: productRaw.category,
+    _id: { $ne: id }, // বর্তমান প্রোডাক্ট বাদ দিতে
+  })
+    .limit(8) // সর্বোচ্চ ৮টি প্রোডাক্ট দেখাবে
+    .lean();
   if (!productRaw) {
     return notFound();
   }
-
+  //সব ডেটা প্লেইন অবজেক্টে কনভার্ট করা (Mongoose Object এরর এড়াতে)
   const product = JSON.parse(JSON.stringify(productRaw));
-
-
+  const relatedProducts = JSON.parse(JSON.stringify(relatedProductsRaw));
   return (
     <div className="min-h-screen bg-[#FDF7FB] p-6 md:p-20">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 bg-white p-8 rounded-[3rem] shadow-xl border border-pink-50/50">
         {/* Image Section */}
         <div className="relative group ">
-         <ProductImageSlider images={product.images} />
+          <ProductImageSlider images={product.images} />
         </div>
 
         {/* Content Section */}
@@ -71,9 +75,11 @@ export default async function ProductDetailsPage({
                 {product?.fabric || "Premium Quality"}
               </span>
             </div>
-          
           </div>
         </div>
+      </div>
+      <div className="max-w-6xl mx-auto">
+        <RelatedProducts products={relatedProducts} />
       </div>
     </div>
   );
