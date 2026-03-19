@@ -6,8 +6,6 @@ import { getRecentlyViewedProducts } from "@/actions/product.actions";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";;
 import { ChevronLeft, ChevronRight } from "lucide-react";
-
-// Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
 
