@@ -6,6 +6,7 @@ import ProductImageSlider from "@/components/public/ProductImageSlider";
 import ProductActionSection from "@/components/public/ProductActionSection";
 import RelatedProducts from "@/components/public/RelatedProducts";
 import RecentlyViewed from "@/components/public/RecentlyViewed";
+import ProductTracker from "@/components/public/ProductTracker";
 
 export default async function ProductDetailsPage({
   params,
@@ -31,6 +32,9 @@ export default async function ProductDetailsPage({
   return (
     <div className="min-h-screen bg-[#FDF7FB] p-6 md:p-20">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 bg-white p-8 rounded-[3rem] shadow-xl border border-pink-50/50">
+
+      // product tracker for localStorage
+      <ProductTracker id={product._id} />
         {/* Image Section */}
         <div className="relative group ">
           <ProductImageSlider images={product.images} />
